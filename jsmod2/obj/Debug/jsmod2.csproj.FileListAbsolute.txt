@@ -1,0 +1,10 @@
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/obj/Debug/jsmod2.csprojAssemblyReference.cache
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/obj/Debug/jsmod2.csproj.CoreCompileInputs.cache
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/bin/Debug/jsmod2.exe
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/bin/Debug/jsmod2.pdb
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/bin/Debug/Newtonsoft.Json.dll
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/bin/Debug/Smod2.dll
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/bin/Debug/Newtonsoft.Json.xml
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/obj/Debug/jsmod2.csproj.CopyComplete
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/obj/Debug/jsmod2.exe
+/Users/luchangcun/RiderProjects/ProxyHandler/jsmod2/obj/Debug/jsmod2.pdb

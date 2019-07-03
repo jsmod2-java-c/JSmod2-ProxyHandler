@@ -1,0 +1,10 @@
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/bin/Debug/ConsoleApplication1.exe
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/bin/Debug/ConsoleApplication1.pdb
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/bin/Debug/Newtonsoft.Json.dll
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/bin/Debug/Smod2.dll
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/bin/Debug/Newtonsoft.Json.xml
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/obj/Debug/ConsoleApplication1.csprojAssemblyReference.cache
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/obj/Debug/ConsoleApplication1.csproj.CoreCompileInputs.cache
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/obj/Debug/ConsoleApplication1.csproj.CopyComplete
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/obj/Debug/ConsoleApplication1.exe
+/Users/luchangcun/RiderProjects/ProxyHandler/ConsoleApplication1/obj/Debug/ConsoleApplication1.pdb
