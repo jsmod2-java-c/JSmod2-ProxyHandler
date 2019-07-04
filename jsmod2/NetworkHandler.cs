@@ -1,3 +1,5 @@
+using System;
+
 namespace jsmod2
 {
     /**
@@ -5,6 +7,9 @@ namespace jsmod2
      */
     public class NetworkHandler
     {
-        
+        public static void handleJsmod2(int id, String json, String end)
+        {
+            
+        }
     }
 }
