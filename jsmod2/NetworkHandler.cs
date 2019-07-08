@@ -1,4 +1,5 @@
 using System;
+using System.Net.Sockets;
 
 namespace jsmod2
 {
@@ -7,7 +8,7 @@ namespace jsmod2
      */
     public class NetworkHandler
     {
-        public static void handleJsmod2(int id, String json, String end)
+        public static void handleJsmod2(int id, String json, String end,TcpClient stream)
         {
             
         }

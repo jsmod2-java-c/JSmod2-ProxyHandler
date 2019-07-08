@@ -100,9 +100,7 @@ namespace jsmod2
                     int.TryParse(head,out id);
                     string end = getEnd(jsmod2Request);
                     string json = getJson(jsmod2Request);
-                    Console.WriteLine(id);
-                    Console.WriteLine(end);
-                    Console.WriteLine(json);
+                    NetworkHandler.handleJsmod2(id,json,end,client);
                 }
             }
             client.Close();
