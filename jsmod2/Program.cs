@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
-using jsmod2.command;
 using Newtonsoft.Json;
 using Smod2;
 using Smod2.Attributes;
