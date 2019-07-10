@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
+using jsmod2.command;
 using Newtonsoft.Json;
 using Smod2;
 using Smod2.Attributes;
@@ -31,21 +32,19 @@ namespace jsmod2
     internal class ProxyHandler : Plugin
     {
 
-        public static void Main(string[] args)
-        {
-            Console.WriteLine();
-            ProxyHandler handler = new ProxyHandler();
+        public static ProxyHandler handler { get; set; }
 
-        }
+
         public const int MAX_LENGTH = 8 * 30;
         public override void Register()
         {
-            
+            handler = this;
+            AddEventHandlers(new HandleAdmin());
         }
 
         public override void OnEnable()
         {
-           //Info("The ProxyHandler is Start!Please start the jsmod2 server");
+            Info("The ProxyHandler is Start!Please start the jsmod2 server");
            Thread thread = new Thread(listenerThread);
            thread.Start();
            //Console.WriteLine(Convert.ToBase64String(Encoding.UTF8.GetBytes("你好")));
@@ -63,49 +62,12 @@ namespace jsmod2
             while (true)
             {
                 TcpClient client = listener.AcceptTcpClient();
-                WorkThread thread = new WorkThread(client);
+                WorkThread thread = new WorkThread(client,this);
                 ThreadPool.QueueUserWorkItem(new WaitCallback(thread.socketThread));
             }
            
         }
 
-       
-        
-
-        
-    }
-
-    class WorkThread
-    {
-        private TcpClient client;
-        public WorkThread(TcpClient client)
-        {
-            this.client = client;
-        }
-        public void socketThread(object state)
-        {
-            byte[] bytes = new byte[ProxyHandler.MAX_LENGTH];
-            client.GetStream().Read(bytes,0,getLen(bytes));
-            var utf8WithoutBom = new UTF8Encoding(false);
-            string base64String = getFullBytes(client,utf8WithoutBom.GetString(bytes));
-            string[] base64s = base64String.Split(';');
-
-            foreach (var base64 in base64s)
-            {
-                if (!base64.Equals(""))
-                {
-                    string jsmod2Request = utf8WithoutBom.GetString(Convert.FromBase64String(utf8WithoutBom.GetString(toCommon(utf8WithoutBom.GetBytes(base64)))));
-                    string head = getHead(jsmod2Request);
-                    int id;
-                    int.TryParse(head,out id);
-                    string end = getEnd(jsmod2Request);
-                    string json = getJson(jsmod2Request);
-                    NetworkHandler.handleJsmod2(id,json,end,client);
-                }
-            }
-            client.Close();
-        }
-        
         public void sendEventObject(Event e,int id,string field,object o)
         {
             sendObject(JsonConvert.SerializeObject(e),id,field,o);
@@ -119,13 +81,59 @@ namespace jsmod2
         public void sendObject(TcpClient tcp,string json1, int id, string field, object o)
         {
             var utf8WithoutBom = new UTF8Encoding(false);
-            string json = id+"-"+json1+"|"+field+":"+JsonConvert.SerializeObject(o);
+            if (field.Equals(""))
+            {
+                string json = id + "-" + json1;
+            }
+            else
+            {
+                string json = id+"-"+json1+"|"+field+":"+JsonConvert.SerializeObject(o);   
+            }
+            //TODO 配置文件设置端口 ip
             tcp.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"),19935));
-            byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(json)));
+            byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(json1)));
             tcp.GetStream().Write(bytes,0,bytes.Length);
+            
         }
         
 
+        
+    }
+
+    class WorkThread
+    {
+        private TcpClient client;
+
+        private ProxyHandler handler;
+        public WorkThread(TcpClient client,ProxyHandler handler)
+        {
+            this.client = client;
+            this.handler = handler;
+        }
+        public void socketThread(object state)
+        {
+            byte[] bytes = new byte[ProxyHandler.MAX_LENGTH];
+            client.GetStream().Read(bytes,0,getLen(bytes));
+            var utf8WithoutBom = new UTF8Encoding(false);
+            string base64String = getFullBytes(client,utf8WithoutBom.GetString(bytes));
+            string[] base64s = base64String.Split(';');
+
+            foreach (var base64 in base64s)
+            {
+                if (!base64.Equals(""))
+                {
+                   
+                    string jsmod2Request = utf8WithoutBom.GetString(Convert.FromBase64String(utf8WithoutBom.GetString(toCommon(utf8WithoutBom.GetBytes(base64)))));
+                    string head = getHead(jsmod2Request);
+                    int id;
+                    int.TryParse(head,out id);
+                    string end = getEnd(jsmod2Request);
+                    string json = getJson(jsmod2Request);
+                    NetworkHandler.handleJsmod2(id,json,end,client);
+                }
+            }
+            client.Close();
+        }
 
         public string getEnd(string request)
         {

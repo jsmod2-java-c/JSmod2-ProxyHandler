@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="command\CommandHandler.cs" />
+    <Compile Include="event\HandleAdmin.cs" />
     <Compile Include="NetworkHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
