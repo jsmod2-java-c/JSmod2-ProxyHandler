@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Smod2;
+using Smod2.API;
 using Smod2.Attributes;
 using Smod2.Events;
 
@@ -30,6 +31,7 @@ namespace jsmod2
     internal class ProxyHandler : Plugin
     {
 
+        public Dictionary<String, Item> itemMapping;
         public static ProxyHandler handler { get; set; }
 
 
@@ -88,6 +90,8 @@ namespace jsmod2
                 string json = id+"-"+json1+"|"+field+":"+JsonConvert.SerializeObject(o);   
             }
             //TODO 配置文件设置端口 ip
+            //如何定位物品，并设置，通过itemMapping找到id归属对象(player这个字段就是id)
+            //然后通过id定位到物品，并设置
             tcp.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"),19935));
             byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(json1)));
             tcp.GetStream().Write(bytes,0,bytes.Length);
