@@ -7,7 +7,10 @@ namespace jsmod2
     {
         public void OnAdminQuery(AdminQueryEvent ev)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x01,"","");
+            ProxyHandler.handler.sendEventObject(ev,0x01,
+                new IdMapping()
+                    .appendId(Lib.ADMIN_EVENT_SCPDATA_ID,System.Guid.NewGuid().ToString())
+                );
         }
     }
 }

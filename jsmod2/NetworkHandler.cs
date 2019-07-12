@@ -13,6 +13,7 @@ namespace jsmod2
     //截取set和get包，调用相应方法，并将返回值返回
     //sendPacket方法
     //触发事件时，将事件对象序列化传递给jsmod2,如果其中含有Item，则生成一个id，把id和Item对象对应上
+    //其他实体api也通过id定位
     //触发指令时，当指令来自于jsmod2注册，CommandHandler将指令信息封装(Command对象，Sender对象，参数)
     //，发到jsmod2 [OK]
     

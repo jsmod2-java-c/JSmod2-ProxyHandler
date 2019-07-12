@@ -9,9 +9,11 @@ namespace jsmod2
     {
         public void OnPlayerPickupItemLate(PlayerPickupItemLateEvent ev)
         {
-            String id = System.Guid.NewGuid().ToString();
-            ProxyHandler.handler.itemMapping.Add(id,ev.Item);
-            ProxyHandler.handler.sendEventObject(ev,0x31,"item-playerName",id);
+            String id = Guid.NewGuid().ToString();
+            ProxyHandler.handler.sendEventObject(ev,0x31,
+                new IdMapping()
+                    .appendId(Lib.ITEM_EVENT_ID,id)
+                );
         }
     }
 }

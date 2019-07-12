@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Smod2;
 using Smod2.API;
 using Smod2.Attributes;
+using Smod2.Config;
 using Smod2.Events;
 
 namespace jsmod2
@@ -31,7 +32,7 @@ namespace jsmod2
     internal class ProxyHandler : Plugin
     {
 
-        public Dictionary<String, Item> itemMapping;
+        public Dictionary<String, object> apiMapping;
         public static ProxyHandler handler { get; set; }
 
 
@@ -68,26 +69,26 @@ namespace jsmod2
            
         }
 
-        public void sendEventObject(Event e,int id,string field,object o)
+        public void sendEventObject(Event e,int id,IdMapping mapping)
         {
-            sendObject(JsonConvert.SerializeObject(e),id,field,o);
+            sendObject(JsonConvert.SerializeObject(e),id,mapping);
         }
 
-        public void sendObject(string json1, int id, string field, object o)
+        public void sendObject(string json1, int id,IdMapping mapping)
         {
-            sendObject(new TcpClient(),json1,id,field,o);
+            sendObject(new TcpClient(),json1,id,mapping);
         }
         
-        public void sendObject(TcpClient tcp,string json1, int id, string field, object o)
+        public void sendObject(TcpClient tcp,string json1, int id,IdMapping mapping)
         {
             var utf8WithoutBom = new UTF8Encoding(false);
-            if (field.Equals(""))
+            if (mapping == null)
             {
                 string json = id + "-" + json1;
             }
             else
             {
-                string json = id+"-"+json1+"|"+field+":"+JsonConvert.SerializeObject(o);   
+                string json = id + "-" + json1 + mapping.get();
             }
             //TODO 配置文件设置端口 ip
             //如何定位物品，并设置，通过itemMapping找到id归属对象(player这个字段就是id)

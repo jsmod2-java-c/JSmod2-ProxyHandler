@@ -29,14 +29,14 @@ namespace jsmod2.command
                 vo.server = sender as Server;
                 vo.args = args;
                 vo.commandName = name;
-                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x55,"","");
+                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x55,null);
             }
             else if (sender is Player){
                 PlayerCommandVO vo = new PlayerCommandVO();
                 vo.player = sender as Player;
                 vo.args = args;
                 vo.commandName = name;
-                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x56,"","");
+                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x56,null);
             }
             return new []{"success"};
         }

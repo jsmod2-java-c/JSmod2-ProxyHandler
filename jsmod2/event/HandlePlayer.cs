@@ -7,7 +7,9 @@ namespace jsmod2
     {
         public void OnPlayerJoin(PlayerJoinEvent ev)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x2d,"","");
+            ProxyHandler.handler.sendEventObject(ev,0x2d,
+                new IdMapping()
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,System.Guid.NewGuid().ToString()));
         }
     }
 }

@@ -47,8 +47,12 @@
   <ItemGroup>
     <Compile Include="command\CommandHandler.cs" />
     <Compile Include="event\HandleAdmin.cs" />
+    <Compile Include="event\HandleAuthCheck.cs" />
+    <Compile Include="event\HandleBan.cs" />
     <Compile Include="event\HandlePickup.cs" />
     <Compile Include="event\HandlePlayer.cs" />
+    <Compile Include="IdMapping.cs" />
+    <Compile Include="Lib.cs" />
     <Compile Include="NetworkHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
