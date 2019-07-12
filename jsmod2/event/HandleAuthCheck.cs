@@ -10,8 +10,9 @@ namespace jsmod2
         {
             ProxyHandler.handler.sendEventObject(ev,0x03,
                 new IdMapping()
-                    .appendId(Lib.ID,System.Guid.NewGuid().ToString())
-                    .appendId(Lib.AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID,Guid.NewGuid().ToString()));
+                    .appendId(Lib.ID,System.Guid.NewGuid().ToString(),ev)
+                    .appendId(Lib.AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID,Guid.NewGuid().ToString(),
+                        ev.Requester.Scp079Data));
         }
     }
 }

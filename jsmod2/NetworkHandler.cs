@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using jsmod2.command;
 using Newtonsoft.Json;
+using Smod2.API;
+using Smod2.Events;
 
 namespace jsmod2
 {
@@ -24,12 +27,21 @@ namespace jsmod2
     {
         public static void handleJsmod2(int id, String json, String end,TcpClient stream) 
         {
+            Dictionary<string,string> mapper = (Dictionary<string,string>)JsonConvert.DeserializeObject(json,typeof(Dictionary<string,string>));
             //指令注册
             if (id == 0x53)
             {
                 //处理指令注册
                 NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
                 ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));
+            }
+            //关于AdminQuery设置Player
+            if (id == 0x66)
+            {
+                string apiId = mapper["player"];//获取api对象id
+                AdminQueryEvent o = (AdminQueryEvent)ProxyHandler.handler.apiMapping[apiId];//根据id找到api对象
+                Player admin = (Player)JsonConvert.DeserializeObject(mapper["admin"],typeof(Player));//从json中获取设置的值，反序列化
+                o.Admin = admin;//设置
             }
         }
     }
