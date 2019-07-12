@@ -103,12 +103,12 @@ namespace jsmod2
         //发送协议集合，用于传输物品数组，有多个不同的id
         public void sendObjects(JsonSetting[] settings)
         {
-            string all = getProtocol(JsonConvert.SerializeObject(settings[0].Object), settings[0].id,
+            string all = getProtocol(JsonConvert.SerializeObject(settings[0].responseValue), settings[0].id,
                 settings[0].idMapping);
             for (int i = 1; i < settings.Length; i++)
             {
                 JsonSetting setting = settings[i];
-                all = all + "@!" + getProtocol(JsonConvert.SerializeObject(settings[i].Object), settings[i].id,
+                all = all + "@!" + getProtocol(JsonConvert.SerializeObject(settings[i].responseValue), settings[i].id,
                           settings[i].idMapping);
             }
             send(all,new TcpClient());
