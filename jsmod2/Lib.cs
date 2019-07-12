@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Smod2.API;
+
 namespace jsmod2
 {
     //对于协议的lib
@@ -16,6 +21,12 @@ namespace jsmod2
         
         //关于authCheck类型
         public const string AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID = "requester-"+PLAYER_SCPDATA_ID;
+
+
+        public static object getObject(Dictionary<string, string> dic, Type type,string name)
+        {
+            return JsonConvert.DeserializeObject(dic[name], type);
+        }
 
     }
 }

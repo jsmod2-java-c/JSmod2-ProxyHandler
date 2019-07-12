@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using jsmod2;
 using jsmod2.command;
 using Newtonsoft.Json;
 using Smod2.API;
@@ -25,7 +26,13 @@ namespace jsmod2
     //TODO 检测下Door的Name，和其他的GetComponent,GetGameObject方法是什么
     public class NetworkHandler
     {
-        public static void handleJsmod2(int id, String json, String end,TcpClient stream) 
+        private static Dictionary<int,Handler> handlers = new Dictionary<int, Handler>();
+
+        static NetworkHandler()
+        {
+            handlers.Add(0x66,new HandleAdminQuerySetAdmin());
+        }
+        public static void handleJsmod2(int id, String json, String end,TcpClient client) 
         {
             Dictionary<string,string> mapper = (Dictionary<string,string>)JsonConvert.DeserializeObject(json,typeof(Dictionary<string,string>));
             //指令注册
@@ -35,14 +42,37 @@ namespace jsmod2
                 NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
                 ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));
             }
-            //关于AdminQuery设置Player
-            if (id == 0x66)
+            else
             {
                 string apiId = mapper["player"];//获取api对象id
-                AdminQueryEvent o = (AdminQueryEvent)ProxyHandler.handler.apiMapping[apiId];//根据id找到api对象
-                Player admin = (Player)JsonConvert.DeserializeObject(mapper["admin"],typeof(Player));//从json中获取设置的值，反序列化
-                o.Admin = admin;//设置
+                object o = ProxyHandler.handler.apiMapping[apiId];
+                JsonSetting[] response = handlers[id].handle(o,mapper);
+                if (response != null)
+                {
+                    //将response对象发出去
+                    ProxyHandler.handler.sendObjects(response);
+                }
             }
+            
         }
+    }
+}
+
+public interface Handler
+{
+    JsonSetting[] handle(object api,Dictionary<string,string> mapper);
+}
+
+//设置信息的监听器
+//关于AdminQuery设置Admin
+public class HandleAdminQuerySetAdmin : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        AdminQueryEvent o = (AdminQueryEvent)api;
+        //根据id找到api对象
+        Player admin = (Player)Lib.getObject(mapper,typeof(Player),"admin");//从json中获取设置的值，反序列化
+        o.Admin = admin;//设置
+        return null;
     }
 }
