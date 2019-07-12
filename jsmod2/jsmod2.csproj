@@ -55,6 +55,7 @@
     <Compile Include="Lib.cs" />
     <Compile Include="NetworkHandler.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="PropertiesReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

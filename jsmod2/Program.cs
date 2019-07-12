@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -32,7 +33,10 @@ namespace jsmod2
     internal class ProxyHandler : Plugin
     {
 
-        public Dictionary<String, object> apiMapping;
+        public Dictionary<String, object> apiMapping = new Dictionary<string, object>();
+        
+        public PropertiesReader reader = new PropertiesReader();
+
         public static ProxyHandler handler { get; set; }
 
 
@@ -41,6 +45,11 @@ namespace jsmod2
         {
             handler = this;
             AddEventHandlers(new HandleAdmin());
+            reader.append("this.ip","127.0.0.1")
+                .append("this.port","19938")
+                .append("jsmod2.ip","127.0.0.1")
+                .append("jsmod2.port","19935")
+                .create(Server.GetAppFolder()+"/jsmod2.conf");
         }
 
         public override void OnEnable()
@@ -58,7 +67,9 @@ namespace jsmod2
 
         public void listenerThread()
         {
-            TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse("127.0.0.1"),19938));
+            int port;
+            int.TryParse(reader.get("this.port", false), out port);
+            TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse(reader.get("this.ip",false)),port));
             listener.Start();
             while (true)
             {
@@ -93,7 +104,9 @@ namespace jsmod2
             //TODO 配置文件设置端口 ip
             //如何定位物品，并设置，通过itemMapping找到id归属对象(player这个字段就是id)
             //然后通过id定位到物品，并设置
-            tcp.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"),19935));
+            int port;
+            int.TryParse(reader.get("jsmod2.port", false), out port);
+            tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip",false)),port));
             byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(json1)));
             tcp.GetStream().Write(bytes,0,bytes.Length);
             
@@ -145,7 +158,6 @@ namespace jsmod2
 
         public string getHead(string request)
         {
-            //1-sssss
             return request.Substring(0,request.IndexOf('-'));
         }
 
