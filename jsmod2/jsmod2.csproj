@@ -52,6 +52,7 @@
     <Compile Include="event\HandlePickup.cs" />
     <Compile Include="event\HandlePlayer.cs" />
     <Compile Include="IdMapping.cs" />
+    <Compile Include="JsonSetting.cs" />
     <Compile Include="Lib.cs" />
     <Compile Include="NetworkHandler.cs" />
     <Compile Include="Program.cs" />

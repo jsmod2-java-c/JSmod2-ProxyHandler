@@ -36,6 +36,8 @@ namespace jsmod2
         public Dictionary<String, object> apiMapping = new Dictionary<string, object>();
         
         public PropertiesReader reader = new PropertiesReader();
+        
+        UTF8Encoding utf8WithoutBom = new UTF8Encoding(false);
 
         public static ProxyHandler handler { get; set; }
 
@@ -79,7 +81,8 @@ namespace jsmod2
             }
            
         }
-
+        
+        
         public void sendEventObject(Event e,int id,IdMapping mapping)
         {
             sendObject(JsonConvert.SerializeObject(e),id,mapping);
@@ -92,26 +95,48 @@ namespace jsmod2
         
         public void sendObject(TcpClient tcp,string json1, int id,IdMapping mapping)
         {
-            var utf8WithoutBom = new UTF8Encoding(false);
+            //如何定位物品，并设置，通过itemMapping找到id归属对象(player这个字段就是id)
+            //然后通过id定位到物品，并设置
+            send(getProtocol(json1,id,mapping),tcp);
+        }
+        
+        //发送协议集合，用于传输物品数组，有多个不同的id
+        public void sendObjects(JsonSetting[] settings)
+        {
+            string all = getProtocol(JsonConvert.SerializeObject(settings[0].Object), settings[0].id,
+                settings[0].idMapping);
+            for (int i = 1; i < settings.Length; i++)
+            {
+                JsonSetting setting = settings[i];
+                all = all + "@!" + getProtocol(JsonConvert.SerializeObject(settings[i].Object), settings[i].id,
+                          settings[i].idMapping);
+            }
+            send(all,new TcpClient());
+        }
+
+        private void send(string jsons,TcpClient tcp)
+        {
+            int port;
+            int.TryParse(reader.get("jsmod2.port", false), out port);
+            byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons)));
+            tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip",false)),port));
+            tcp.GetStream().Write(bytes,0,bytes.Length);
+        }
+
+        public string getProtocol(string json1, int id,IdMapping mapping)
+        {
+            string json;
             if (mapping == null)
             {
-                string json = id + "-" + json1;
+                json = id + "-" + json1;
             }
             else
             {
-                string json = id + "-" + json1 + mapping.get();
+                json = id + "-" + json1 + mapping.get();
             }
-            //TODO 配置文件设置端口 ip
-            //如何定位物品，并设置，通过itemMapping找到id归属对象(player这个字段就是id)
-            //然后通过id定位到物品，并设置
-            int port;
-            int.TryParse(reader.get("jsmod2.port", false), out port);
-            tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip",false)),port));
-            byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(json1)));
-            tcp.GetStream().Write(bytes,0,bytes.Length);
-            
+
+            return json;
         }
-        
 
         
     }
