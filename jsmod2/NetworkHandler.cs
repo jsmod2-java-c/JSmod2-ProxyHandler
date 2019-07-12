@@ -18,6 +18,7 @@ namespace jsmod2
     
     //TODO 截取set和get包，调用相应方法，并将返回值返回
     //TODO 触发事件时，将事件对象序列化传递给jsmod2
+    //TODO 检测下Door的Name，和其他的GetComponent,GetGameObject方法是什么
     public class NetworkHandler
     {
         public static void handleJsmod2(int id, String json, String end,TcpClient stream) 
