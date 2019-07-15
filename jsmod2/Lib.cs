@@ -18,7 +18,7 @@ namespace jsmod2
         
         //关于itemEvent类型
         public const string ITEM_EVENT_ID = "item-"+ID;
-        
+
         //关于authCheck类型
         public const string AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID = "requester-"+PLAYER_SCPDATA_ID;
 
@@ -26,6 +26,13 @@ namespace jsmod2
         public static object getObject(Dictionary<string, string> dic, Type type,string name)
         {
             return JsonConvert.DeserializeObject(dic[name], type);
+        }
+
+        public static int getInt(string s)
+        {
+            int id;
+            int.TryParse(s, out id);
+            return id;
         }
 
     }

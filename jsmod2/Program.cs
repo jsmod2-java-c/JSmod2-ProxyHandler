@@ -101,7 +101,7 @@ namespace jsmod2
         }
         
         //发送协议集合，用于传输物品数组，有多个不同的id
-        public void sendObjects(JsonSetting[] settings)
+        public void sendObjects(TcpClient client,JsonSetting[] settings)
         {
             string all = getProtocol(JsonConvert.SerializeObject(settings[0].responseValue), settings[0].id,
                 settings[0].idMapping);
@@ -111,9 +111,14 @@ namespace jsmod2
                 all = all + "@!" + getProtocol(JsonConvert.SerializeObject(settings[i].responseValue), settings[i].id,
                           settings[i].idMapping);
             }
-            send(all,new TcpClient());
+            send(all,client);
         }
 
+
+        public void sendObjects(JsonSetting[] settings)
+        {
+            sendObjects(new TcpClient(),settings);
+        }
         private void send(string jsons,TcpClient tcp)
         {
             int port;
@@ -166,11 +171,16 @@ namespace jsmod2
                    
                     string jsmod2Request = utf8WithoutBom.GetString(Convert.FromBase64String(utf8WithoutBom.GetString(toCommon(utf8WithoutBom.GetBytes(base64)))));
                     string head = getHead(jsmod2Request);
+                    string json = getJson(jsmod2Request);
+                    Dictionary<string,string> mapper = (Dictionary<string,string>)JsonConvert.DeserializeObject(json,typeof(Dictionary<string,string>));
+                    if ("".Equals(head))
+                    {
+                        head = mapper["id"];
+                    }
                     int id;
                     int.TryParse(head,out id);
                     string end = getEnd(jsmod2Request);
-                    string json = getJson(jsmod2Request);
-                    NetworkHandler.handleJsmod2(id,json,end,client);
+                    NetworkHandler.handleJsmod2(id,json,mapper,end,client);
                 }
             }
             client.Close();
@@ -178,11 +188,19 @@ namespace jsmod2
 
         public string getEnd(string request)
         {
+            if (request.IndexOf('~') == -1)
+            {
+                return "";
+            }
             return request.Substring(request.IndexOf('~')+1);
         }
 
         public string getHead(string request)
         {
+            if (request.IndexOf('-') == -1)
+            {
+                return "";
+            }
             return request.Substring(0,request.IndexOf('-'));
         }
 
@@ -202,6 +220,10 @@ namespace jsmod2
 
         public string getJson(string request)
         {
+            if (!request.Contains("~")&&!request.Contains("-"))
+            {
+                return request;
+            }
             return request.Substring(request.IndexOf('-')+1, request.LastIndexOf('~')-request.IndexOf('-')-1);
         }
 

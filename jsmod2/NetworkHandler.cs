@@ -31,10 +31,13 @@ namespace jsmod2
         static NetworkHandler()
         {
             handlers.Add(0x66,new HandleAdminQuerySetAdmin());
+            handlers.Add(0x57,new HandleItemDrop());
+            handlers.Add(0x5c,new HandleItemSetComponent());
+            handlers.Add(0x5d,new HandleItemGetKinematic());
         }
-        public static void handleJsmod2(int id, String json, String end,TcpClient client) 
+        public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper, String end,TcpClient client) 
         {
-            Dictionary<string,string> mapper = (Dictionary<string,string>)JsonConvert.DeserializeObject(json,typeof(Dictionary<string,string>));
+            
             //指令注册
             if (id == 0x53)
             {
@@ -50,7 +53,7 @@ namespace jsmod2
                 if (response != null)
                 {
                     //将response对象发出去
-                    ProxyHandler.handler.sendObjects(response);
+                    ProxyHandler.handler.sendObjects(client,response);
                 }
             }
             
@@ -69,10 +72,44 @@ public class HandleAdminQuerySetAdmin : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
     {
-        AdminQueryEvent o = (AdminQueryEvent)api;
+        AdminQueryEvent o = api as AdminQueryEvent;
         //根据id找到api对象
         Player admin = (Player)Lib.getObject(mapper,typeof(Player),"admin");//从json中获取设置的值，反序列化
         o.Admin = admin;//设置
         return null;
+    }
+}
+
+public class HandleItemDrop : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+        item.Drop();
+        return null;
+    }
+}
+
+public class HandleItemSetComponent : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+
+        int id= Lib.getInt(mapper["id"]);
+        object o = item.GetComponent();
+        //是否赋予id 待定
+        return new[] {new JsonSetting(id,o,null)};
+    }
+}
+
+public class HandleItemGetKinematic : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+        bool kinematic = item.GetKinematic();
+        int id = Lib.getInt(mapper["id"]);
+        return new[] {new JsonSetting(id,kinematic,null)};
     }
 }
