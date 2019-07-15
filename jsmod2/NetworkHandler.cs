@@ -32,8 +32,12 @@ namespace jsmod2
         {
             handlers.Add(0x66,new HandleAdminQuerySetAdmin());
             handlers.Add(0x57,new HandleItemDrop());
-            handlers.Add(0x5c,new HandleItemSetComponent());
+            handlers.Add(0x5c,new HandleItemGetComponent());
             handlers.Add(0x5d,new HandleItemGetKinematic());
+            handlers.Add(0x5e,new HandleItemGetPosition());
+            handlers.Add(0x58,new HandleItemRemove());
+            handlers.Add(0x5a,new HandleItemSetKinematic());
+            handlers.Add(0x5b,new HandleItemSetPosition());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper, String end,TcpClient client) 
         {
@@ -90,7 +94,7 @@ public class HandleItemDrop : Handler
     }
 }
 
-public class HandleItemSetComponent : Handler
+public class HandleItemGetComponent : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
     {
@@ -111,5 +115,59 @@ public class HandleItemGetKinematic : Handler
         bool kinematic = item.GetKinematic();
         int id = Lib.getInt(mapper["id"]);
         return new[] {new JsonSetting(id,kinematic,null)};
+    }
+}
+
+public class HandleItemGetPosition : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+        Vector vector = item.GetPosition();
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),vector,null)};
+    }
+}
+
+public class HandleItemRemove : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+        item.Remove();
+        return null;
+    }
+}
+
+//这个设置不了 不能使用
+[Obsolete("could not set")]
+public class HandleItemSetInWorld : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+        string inWorld = mapper["inWorld"];
+        return null;
+    }
+}
+
+public class HandleItemSetKinematic : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+        item.SetKinematic(Lib.getBool(mapper["kinematic"]));
+        return null;
+    }
+}
+
+public class HandleItemSetPosition : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Item item = api as Item;
+        
+        item.SetPosition((Vector)Lib.getObject(mapper,typeof(Vector),"position"));
+
+        return null;
     }
 }

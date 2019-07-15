@@ -35,5 +35,11 @@ namespace jsmod2
             return id;
         }
 
+        public static bool getBool(string s)
+        {
+            bool get;
+            bool.TryParse(s, out get);
+            return get;
+        }
     }
 }
