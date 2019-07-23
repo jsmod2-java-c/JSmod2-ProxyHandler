@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Smod2;
-using Smod2.API;
 using Smod2.Attributes;
-using Smod2.Config;
 using Smod2.Events;
 
 namespace jsmod2
