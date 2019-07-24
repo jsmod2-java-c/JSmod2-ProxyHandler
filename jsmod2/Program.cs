@@ -27,7 +27,7 @@ namespace jsmod2
      * ProxyHandler主端，用于交互Jsmod2协议
      * JSON交互采用Socket
      */
-    internal class ProxyHandler : Plugin
+    class ProxyHandler : Plugin
     {
 
         public Dictionary<String, object> apiMapping = new Dictionary<string, object>();
@@ -52,10 +52,12 @@ namespace jsmod2
         }
 
         public override void OnEnable()
-        {
+        { 
             Info("The ProxyHandler is Start!Please start the jsmod2 server");
-           Thread thread = new Thread(listenerThread);
-           thread.Start();
+            Thread thread = new Thread(listenerThread);
+            thread.Start();
+            //listenerThread();
+            Info("Start the JSMOD2_PROXY_HANDLER");
            //Console.WriteLine(Convert.ToBase64String(Encoding.UTF8.GetBytes("你好")));
         }
 
@@ -67,16 +69,18 @@ namespace jsmod2
         public void listenerThread()
         {
             int port;
-            int.TryParse(reader.get("this.port", false), out port);
-            TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse(reader.get("this.ip",false)),port));
+            int.TryParse(reader.get("this.port"), out port);
+            Info("启动了JSMOD2代理监听器，端口为"+port);
+            TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse(reader.get("this.ip")),port));
             listener.Start();
             while (true)
             {
                 TcpClient client = listener.AcceptTcpClient();
+                Info("监听到了一个来自jsmod2的数据包");
                 WorkThread thread = new WorkThread(client,this);
-                ThreadPool.QueueUserWorkItem(new WaitCallback(thread.socketThread));
+                Thread t = new Thread(thread.socketThread);
+                t.Start();
             }
-           
         }
         
         
@@ -119,9 +123,9 @@ namespace jsmod2
         private void send(string jsons,TcpClient tcp)
         {
             int port;
-            int.TryParse(reader.get("jsmod2.port", false), out port);
+            int.TryParse(reader.get("jsmod2.port"), out port);
             byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons)));
-            tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip",false)),port));
+            tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")),port));
             tcp.GetStream().Write(bytes,0,bytes.Length);
         }
 
@@ -153,7 +157,7 @@ namespace jsmod2
             this.client = client;
             this.handler = handler;
         }
-        public void socketThread(object state)
+        public void socketThread()
         {
             byte[] bytes = new byte[ProxyHandler.MAX_LENGTH];
             client.GetStream().Read(bytes,0,getLen(bytes));
