@@ -162,7 +162,8 @@ namespace jsmod2
             byte[] bytes = new byte[ProxyHandler.MAX_LENGTH];
             client.GetStream().Read(bytes,0,getLen(bytes));
             var utf8WithoutBom = new UTF8Encoding(false);
-            string base64String = getFullBytes(client,utf8WithoutBom.GetString(bytes));
+            string base64String = getFullBytes(client,utf8WithoutBom.GetString(toCommon(bytes))).Trim();
+            ProxyHandler.handler.Info(base64String);
             string[] base64s = base64String.Split(';');
 
             foreach (var base64 in base64s)

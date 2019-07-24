@@ -41,7 +41,7 @@ namespace jsmod2
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper, String end,TcpClient client) 
         {
-            
+            ProxyHandler.handler.Info(json);
             //指令注册
             if (id == 0x53)
             {
@@ -60,7 +60,7 @@ namespace jsmod2
                     ProxyHandler.handler.sendObjects(client,response);
                 }
             }
-            
+            client.Close();
         }
     }
 }
