@@ -9,6 +9,11 @@ namespace jsmod2
     public class Lib
     {
         public const string ID = "playerName";
+
+        public const string PLAYER_ID = "player-" + ID;
+
+        public const string ADMIN_ID = "admin-" + ID;
+        
         public const string PLAYER_SCPDATA_ID = "scp079Data-"+ID;
         //关于playerEvent类型
         public const string PLAYER_EVENT_SCPDATA_ID = "player-"+PLAYER_SCPDATA_ID;

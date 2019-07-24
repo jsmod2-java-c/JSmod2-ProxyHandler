@@ -13,6 +13,7 @@ namespace jsmod2
                 new IdMapping()
                     .appendId(Lib.ID,Guid.NewGuid().ToString(),ev)
                     .appendId(Lib.ITEM_EVENT_ID,Guid.NewGuid().ToString(),ev.Item)
+                
                 );
         }
     }

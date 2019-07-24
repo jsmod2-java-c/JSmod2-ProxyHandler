@@ -13,7 +13,8 @@ namespace jsmod2
                     .appendId(Lib.ID,Guid.NewGuid().ToString(),ev)
                 .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,Guid.NewGuid().ToString(),ev.Player.Scp079Data)
                 .appendId(Lib.ADMIN_EVENT_SCPDATA_ID,Guid.NewGuid().ToString(),ev.Player.Scp079Data)
-            );
+                    .appendId(Lib.PLAYER_ID,Guid.NewGuid().ToString(),ev.Player)
+                    .appendId(Lib.ADMIN_ID,Guid.NewGuid().ToString(),ev.Admin));
         }
     }
 }

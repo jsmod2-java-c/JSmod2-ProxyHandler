@@ -12,7 +12,8 @@ namespace jsmod2
                 new IdMapping()
                     .appendId(Lib.ID,System.Guid.NewGuid().ToString(),ev)
                     .appendId(Lib.AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID,Guid.NewGuid().ToString(),
-                        ev.Requester.Scp079Data));
+                        ev.Requester.Scp079Data)
+                    .appendId("requester",Guid.NewGuid().ToString(),ev.Requester));
         }
     }
 }
