@@ -95,10 +95,10 @@ namespace jsmod2
             }
         }
         
-        
+        //触发事件只发id
         public void sendEventObject(Event e,int id,IdMapping mapping)
         {
-            sendObject(JsonConvert.SerializeObject(e),id,mapping);
+            sendObject("{}",id,mapping);
         }
 
         public void sendObject(string json1, int id,IdMapping mapping)

@@ -82,7 +82,7 @@ namespace jsmod2
                 
                 
             }
-            Console.WriteLine("FINISH ONE NETWORK");
+            ProxyHandler.handler.Info("FINISH A PACKET");
         }
     }
 }
