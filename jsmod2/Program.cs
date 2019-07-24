@@ -27,6 +27,9 @@ namespace jsmod2
      * ProxyHandler主端，用于交互Jsmod2协议
      * JSON交互采用Socket
      */
+    //最新的设计 2019 7 24
+    //在触发事件时，将不发出event的序列化对象，而是只发出apiId，之后的数据获取通过发包(GetPacket)获取
+    //其他响应也是如此，不发对象，而是只发apiId（Vector则需要发送序列化对象，其他序列化对象设置为字符串""，apiId在apiMapper添加）
     class ProxyHandler : Plugin
     {
 
