@@ -39,28 +39,50 @@ namespace jsmod2
             handlers.Add(0x5a,new HandleItemSetKinematic());
             handlers.Add(0x5b,new HandleItemSetPosition());
         }
-        public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper, String end,TcpClient client) 
+        public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
-            ProxyHandler.handler.Info(json);
             //指令注册
             if (id == 0x53)
             {
                 //处理指令注册
                 NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
                 ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));
+                ProxyHandler.handler.Info("register a jsmod2 command");
+                client.Close();
             }
             else
             {
-                string apiId = mapper["player"];//获取api对象id
-                object o = ProxyHandler.handler.apiMapping[apiId];
-                JsonSetting[] response = handlers[id].handle(o,mapper);
-                if (response != null)
+                string apiId = null;
+                object o = null;
+                if (mapper.ContainsKey("player"))
                 {
-                    //将response对象发出去
-                    ProxyHandler.handler.sendObjects(client,response);
+                    apiId = mapper["player"];//获取api对象id
+                    o = ProxyHandler.handler.apiMapping[apiId];
                 }
+                
+                if (handlers.ContainsKey(id))
+                {
+                    Handler handler = handlers[id];
+                    JsonSetting[] response = handlers[id].handle(o,mapper);
+                    if (response != null)
+                    {
+                        //将response对象发出去
+                        ProxyHandler.handler.sendObjects(client,response);
+                        client.Close();
+                    }
+                    else
+                    {
+                        client.Close();
+                    }
+                }
+                else
+                {
+                    client.Close();
+                }
+                
+                
             }
-            client.Close();
+            Console.WriteLine("FINISH ONE NETWORK");
         }
     }
 }

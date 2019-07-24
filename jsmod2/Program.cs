@@ -75,11 +75,19 @@ namespace jsmod2
             listener.Start();
             while (true)
             {
-                TcpClient client = listener.AcceptTcpClient();
-                Info("监听到了一个来自jsmod2的数据包");
-                WorkThread thread = new WorkThread(client,this);
-                Thread t = new Thread(thread.socketThread);
-                t.Start();
+                try
+                {
+                    TcpClient client = listener.AcceptTcpClient();
+                    Info("监听到了一个来自jsmod2的数据包");
+                    WorkThread thread = new WorkThread(client,this);
+                    Thread t = new Thread(thread.socketThread);
+                    t.Start(); 
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+                
             }
         }
         
@@ -102,7 +110,7 @@ namespace jsmod2
         }
         
         //发送协议集合，用于传输物品数组，有多个不同的id
-        public void sendObjects(TcpClient client,JsonSetting[] settings)
+        public void  sendObjects(TcpClient client,JsonSetting[] settings)
         {
             string all = getProtocol(JsonConvert.SerializeObject(settings[0].responseValue), settings[0].id,
                 settings[0].idMapping);
@@ -172,17 +180,27 @@ namespace jsmod2
                 {
                    
                     string jsmod2Request = utf8WithoutBom.GetString(Convert.FromBase64String(utf8WithoutBom.GetString(toCommon(utf8WithoutBom.GetBytes(base64)))));
-                    string head = getHead(jsmod2Request);
+                    ProxyHandler.handler.Info("DECODE:"+jsmod2Request);
                     string json = getJson(jsmod2Request);
+                    ProxyHandler.handler.Info("JSON:"+json);
                     Dictionary<string,string> mapper = (Dictionary<string,string>)JsonConvert.DeserializeObject(json,typeof(Dictionary<string,string>));
-                    if ("".Equals(head))
+                    foreach (var entry in mapper)
                     {
-                        head = mapper["id"];
+                        Console.WriteLine(entry.Key+":::"+entry.Value);
                     }
+                    String head = mapper["id"];
                     int id;
                     int.TryParse(head,out id);
-                    string end = getEnd(jsmod2Request);
-                    NetworkHandler.handleJsmod2(id,json,mapper,end,client);
+                    ProxyHandler.handler.Info("ID:"+id);
+                    try
+                    {
+                        NetworkHandler.handleJsmod2(id,json,mapper,client);
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                   
                 }
             }
             client.Close();
@@ -222,11 +240,7 @@ namespace jsmod2
 
         public string getJson(string request)
         {
-            if (!request.Contains("~")&&!request.Contains("-"))
-            {
-                return request;
-            }
-            return request.Substring(request.IndexOf('-')+1, request.LastIndexOf('~')-request.IndexOf('-')-1);
+            return request.Substring(request.IndexOf('-')+1);
         }
 
         public string getFullBytes(TcpClient client,string get)
