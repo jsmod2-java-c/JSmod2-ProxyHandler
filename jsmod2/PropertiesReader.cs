@@ -24,12 +24,14 @@ namespace jsmod2
             if (!File.Exists(file))
             {
                 this.file = file;
+                FileStream stream = new FileStream(file,FileMode.Create);
                 foreach (var str in conf)
                 {
-                    FileStream stream = new FileStream(file,FileMode.Create);
+                    ProxyHandler.handler.Info(str.Key+"="+str.Value);
                     byte[] bytes = System.Text.Encoding.Default.GetBytes(str.Key + "=" + str.Value+";");
                     stream.Write(bytes,0,bytes.Length);
                 }
+                stream.Close();
             }
             
         }

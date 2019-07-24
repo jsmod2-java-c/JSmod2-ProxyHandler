@@ -35,7 +35,7 @@ namespace jsmod2
         public PropertiesReader reader = new PropertiesReader();
         
         UTF8Encoding utf8WithoutBom = new UTF8Encoding(false);
-
+        
         public static ProxyHandler handler { get; set; }
 
 
