@@ -8,13 +8,14 @@ namespace jsmod2
     {
         void IEventHandlerBan.OnBan(BanEvent ev)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x04,
-                new IdMapping()
-                    .appendId(Lib.ID,Guid.NewGuid().ToString(),ev)
-                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,Guid.NewGuid().ToString(),ev.Player.Scp079Data)
-                .appendId(Lib.ADMIN_EVENT_SCPDATA_ID,Guid.NewGuid().ToString(),ev.Player.Scp079Data)
-                    .appendId(Lib.PLAYER_ID,Guid.NewGuid().ToString(),ev.Player)
-                    .appendId(Lib.ADMIN_ID,Guid.NewGuid().ToString(),ev.Admin));
+            ProxyHandler.handler.sendEventObject(ev, 0x04,
+                    new IdMapping()
+                        .appendId(Lib.ID, Guid.NewGuid().ToString(), ev)
+                        .appendId(Lib.PLAYER_ID, Guid.NewGuid().ToString(), ev.Player)
+                        .appendId(Lib.ADMIN_ID, Guid.NewGuid().ToString(), ev.Admin)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID, Guid.NewGuid().ToString(), ev.Player.Scp079Data)
+                .appendId(Lib.ADMIN_EVENT_SCPDATA_ID, Guid.NewGuid().ToString(), ev.Admin.Scp079Data));
+
         }
     }
 }
