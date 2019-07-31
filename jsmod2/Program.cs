@@ -49,8 +49,9 @@ namespace jsmod2
             AddEventHandlers(new HandleAdmin());
             AddEventHandlers(new HandleAuthCheck());
             AddEventHandlers(new HandleBan());
-            AddEventHandlers(new HandlePickup());
+            AddEventHandlers(new HandlePickupItemLate());
             AddEventHandlers(new HandlePlayer());
+            AddEventHandlers(new HandlePickupItem());
             reader.append("this.ip","127.0.0.1")
                 .append("this.port","19938")
                 .append("jsmod2.ip","127.0.0.1")

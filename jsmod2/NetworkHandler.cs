@@ -92,6 +92,7 @@ public interface Handler
     JsonSetting[] handle(object api,Dictionary<string,string> mapper);
 }
 
+
 //设置信息的监听器
 //关于AdminQuery设置Admin
 public class HandleAdminQuerySetAdmin : Handler
