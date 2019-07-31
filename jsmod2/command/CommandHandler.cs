@@ -26,17 +26,15 @@ namespace jsmod2.command
             if (sender is Server)
             {
                 ServerCommandVO vo = new ServerCommandVO();
-                vo.server = sender as Server;
                 vo.args = args;
                 vo.commandName = name;
                 ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x55,null);
             }
             else if (sender is Player){
                 PlayerCommandVO vo = new PlayerCommandVO();
-                vo.player = sender as Player;
                 vo.args = args;
                 vo.commandName = name;
-                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x56,null);
+                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x56,new IdMapping().appendId("player-playerName",Guid.NewGuid().ToString(),sender));
             }
             return new []{"success"};
         }
