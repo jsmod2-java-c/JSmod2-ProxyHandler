@@ -49,9 +49,7 @@ namespace jsmod2
                     //处理指令注册
 
                     NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
-                    ProxyHandler.handler.Info("get command Object");
                     ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));
-                    ProxyHandler.handler.Info("register a jsmod2 command");
                     client.Close();
                 }
                 else
@@ -67,7 +65,7 @@ namespace jsmod2
                     if (handlers.ContainsKey(id))
                     {
                         Handler handler = handlers[id];
-                        JsonSetting[] response = handlers[id].handle(o,mapper);
+                        JsonSetting[] response = handler.handle(o,mapper);
                         if (response != null)
                         {
                             //将response对象发出去

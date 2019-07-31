@@ -52,12 +52,10 @@ namespace jsmod2.command
     //服务器的指令
     public class PlayerCommandVO : CommandVO
     {
-        public Player player { get; set; }
     }
     //玩家的指令
     public class ServerCommandVO : CommandVO
     {
-        public Server server { get; set; }
     }
 
     public class CommandVO
