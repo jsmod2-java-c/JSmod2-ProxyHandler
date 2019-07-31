@@ -196,9 +196,14 @@ namespace jsmod2
                     {
                         Console.WriteLine(entry.Key+":::"+entry.Value);
                     }
-                    String head = mapper["id"];
-                    int id;
-                    int.TryParse(head,out id);
+                    int id = 0x53;
+                    
+                    if (mapper.ContainsKey("id"))
+                    {
+                        String head = mapper["id"];
+                        int.TryParse(head,out id);
+                    }
+                    
                     ProxyHandler.handler.Info("ID:"+id);
                     try
                     {

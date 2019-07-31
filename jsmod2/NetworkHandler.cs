@@ -41,47 +41,57 @@ namespace jsmod2
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
-            //指令注册
-            if (id == 0x53)
+            try
             {
-                //处理指令注册
-                NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
-                ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));
-                ProxyHandler.handler.Info("register a jsmod2 command");
-                client.Close();
-            }
-            else
-            {
-                string apiId = null;
-                object o = null;
-                if (mapper.ContainsKey("player"))
+                //指令注册
+                if (id == 0x53)
                 {
-                    apiId = mapper["player"];//获取api对象id
-                    o = ProxyHandler.handler.apiMapping[apiId];
+                    //处理指令注册
+
+                    NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
+                    ProxyHandler.handler.Info("get command Object");
+                    ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));
+                    ProxyHandler.handler.Info("register a jsmod2 command");
+                    client.Close();
                 }
-                
-                if (handlers.ContainsKey(id))
+                else
                 {
-                    Handler handler = handlers[id];
-                    JsonSetting[] response = handlers[id].handle(o,mapper);
-                    if (response != null)
+                    string apiId = null;
+                    object o = null;
+                    if (mapper.ContainsKey("player"))
                     {
-                        //将response对象发出去
-                        ProxyHandler.handler.sendObjects(client,response);
-                        client.Close();
+                        apiId = mapper["player"];//获取api对象id
+                        o = ProxyHandler.handler.apiMapping[apiId];
+                    }
+                
+                    if (handlers.ContainsKey(id))
+                    {
+                        Handler handler = handlers[id];
+                        JsonSetting[] response = handlers[id].handle(o,mapper);
+                        if (response != null)
+                        {
+                            //将response对象发出去
+                            ProxyHandler.handler.sendObjects(client,response);
+                            client.Close();
+                        }
+                        else
+                        {
+                            client.Close();
+                        }
                     }
                     else
                     {
                         client.Close();
                     }
-                }
-                else
-                {
-                    client.Close();
-                }
                 
                 
+                }
             }
+            catch (Exception e)
+            {
+                ProxyHandler.handler.Error(e.Message);
+            }
+           
             ProxyHandler.handler.Info("FINISH A PACKET");
         }
     }

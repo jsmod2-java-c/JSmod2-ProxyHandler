@@ -28,7 +28,6 @@ namespace jsmod2
                 StringBuilder builder = new StringBuilder();
                 foreach (var str in conf)
                 {
-                    ProxyHandler.handler.Info(str.Key+"="+str.Value);
                     builder.Append(str.Key + "=" + str.Value+";");
                 }
                 byte[] bytes = System.Text.Encoding.Default.GetBytes(builder.ToString());
@@ -50,7 +49,6 @@ namespace jsmod2
                 {
                     if (!thing.Equals(""))
                     {
-                        ProxyHandler.handler.Info(thing);
                         string[] kv = thing.Split('=');
                         if (!conf.ContainsKey(kv[0]))
                         {
