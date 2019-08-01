@@ -64,9 +64,6 @@ namespace jsmod2
             Info("The ProxyHandler is Start!Please start the jsmod2 server");
             Thread thread = new Thread(listenerThread);
             thread.Start();
-            //listenerThread();
-            Info("Start the JSMOD2_PROXY_HANDLER");
-           //Console.WriteLine(Convert.ToBase64String(Encoding.UTF8.GetBytes("你好")));
         }
 
         public override void OnDisable()
@@ -87,7 +84,7 @@ namespace jsmod2
                 {
                     TcpClient client = listener.AcceptTcpClient();
                     Info("监听到了一个来自jsmod2的数据包");
-                    WorkThread thread = new WorkThread(client,this);
+                    WorkThread thread = new WorkThread(client);
                     Thread t = new Thread(thread.socketThread);
                     t.Start(); 
                 }
@@ -166,12 +163,10 @@ namespace jsmod2
     class WorkThread
     {
         private TcpClient client;
-
-        private ProxyHandler handler;
-        public WorkThread(TcpClient client,ProxyHandler handler)
+        
+        public WorkThread(TcpClient client)
         {
             this.client = client;
-            this.handler = handler;
         }
         public void socketThread()
         {
