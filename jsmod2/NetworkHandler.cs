@@ -38,6 +38,7 @@ namespace jsmod2
             handlers.Add(0x58,new HandleItemRemove());
             handlers.Add(0x5a,new HandleItemSetKinematic());
             handlers.Add(0x5b,new HandleItemSetPosition());
+            handlers.Add(0x5b,new HandleCommand());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -54,11 +55,11 @@ namespace jsmod2
                 }
                 else
                 {
-                    string apiId = null;
+                    
                     object o = null;
                     if (mapper.ContainsKey("player"))
                     {
-                        apiId = mapper["player"];//获取api对象id
+                        string apiId = mapper["player"];//获取api对象id
                         o = ProxyHandler.handler.apiMapping[apiId];
                     }
                 
@@ -196,9 +197,22 @@ public class HandleItemSetPosition : Handler
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
     {
         Item item = api as Item;
-        
-        item.SetPosition((Vector)Lib.getObject(mapper,typeof(Vector),"position"));
+
+        item.SetPosition(Lib.getVector(mapper["position"]));
 
         return null;
     }
 }
+
+public class HandleCommand : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        string name = mapper["name"];
+        string args = mapper["args"];
+        string[] argsC = Lib.getArray(args);
+        string[] res = ProxyHandler.handler.CommandManager.CallCommand(ProxyHandler.handler.Server, name, argsC);
+        return new []{new JsonSetting(Lib.getInt(mapper["id"]),res,null)};
+    }
+}
+

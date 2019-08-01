@@ -33,6 +33,28 @@ namespace jsmod2
             return JsonConvert.DeserializeObject(dic[name], type);
         }
 
+        public static string[] getArray(string s)
+        {
+            return s.Split(',');
+        }
+        
+        public static Vector getVector(string s)
+        {
+            
+            string[] xyz = s.Split(',');
+            float x = getDouble(xyz[0]);
+            float y = getDouble(xyz[1]);
+            float z = getDouble(xyz[2]);
+            return new Vector(x,y,z);
+        }
+
+        public static float getDouble(string s)
+        {
+            float d;
+            float.TryParse(s, out d);
+            return d;
+        }
+
         public static int getInt(string s)
         {
             int id;
