@@ -187,10 +187,6 @@ namespace jsmod2
                     string json = getJson(jsmod2Request);
                     ProxyHandler.handler.Info("JSON:"+json);
                     Dictionary<string,string> mapper = (Dictionary<string,string>)JsonConvert.DeserializeObject(json,typeof(Dictionary<string,string>));
-                    foreach (var entry in mapper)
-                    {
-                        Console.WriteLine(entry.Key+":::"+entry.Value);
-                    }
                     int id = 0x53;
                     
                     if (mapper.ContainsKey("id"))
@@ -206,7 +202,7 @@ namespace jsmod2
                     }
                     catch (Exception e)
                     {
-                        throw e;
+                        ProxyHandler.handler.Error(e.Message);
                     }
                    
                 }

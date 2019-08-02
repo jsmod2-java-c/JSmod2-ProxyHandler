@@ -38,7 +38,7 @@ namespace jsmod2
             handlers.Add(0x58,new HandleItemRemove());
             handlers.Add(0x5a,new HandleItemSetKinematic());
             handlers.Add(0x5b,new HandleItemSetPosition());
-            handlers.Add(0x5b,new HandleCommand());
+            handlers.Add(107,new HandleCommand());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -48,8 +48,9 @@ namespace jsmod2
                 if (id == 0x53)
                 {
                     //处理指令注册
-
+                    ProxyHandler.handler.Info("registerding the command");
                     NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
+                    ProxyHandler.handler.Info("registered jsmod2 command");
                     ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));
                     client.Close();
                 }
@@ -65,6 +66,7 @@ namespace jsmod2
                 
                     if (handlers.ContainsKey(id))
                     {
+                        ProxyHandler.handler.Info("handling the "+id);
                         Handler handler = handlers[id];
                         JsonSetting[] response = handler.handle(o,mapper);
                         if (response != null)
