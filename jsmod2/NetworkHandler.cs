@@ -48,7 +48,6 @@ namespace jsmod2
                 if (id == 0x53)
                 {
                     //处理指令注册
-                    ProxyHandler.handler.Info("registerding the command");
                     NativeCommand command = JsonConvert.DeserializeObject(json, typeof(NativeCommand)) as NativeCommand;
                     ProxyHandler.handler.Info("registered jsmod2 command");
                     ProxyHandler.handler.AddCommand(command.commandName,new CommandHandler(command));

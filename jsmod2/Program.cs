@@ -90,7 +90,8 @@ namespace jsmod2
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    //输出错误日志
+                    Error(e.Message);
                 }
                 
             }
@@ -138,7 +139,10 @@ namespace jsmod2
             int port;
             int.TryParse(reader.get("jsmod2.port"), out port);
             byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons)));
-            tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")),port));
+            if (!tcp.Connected)
+            {
+                tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")),port));
+            }
             tcp.GetStream().Write(bytes,0,bytes.Length);
         }
 
