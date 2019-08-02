@@ -208,7 +208,7 @@ public class HandleItemSetPosition : Handler
 public class HandleCommand : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
-    {
+    { 
         string name = mapper["name"];
         string args = mapper["args"];
         string[] argsC;

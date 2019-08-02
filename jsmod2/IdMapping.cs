@@ -14,7 +14,7 @@ namespace jsmod2
         //一般target就是str所指的上一级
         public IdMapping appendId(String str, object o,object target)
         {
-            append = append + "|" + str + ":" + JsonConvert.SerializeObject(o);
+            append = append + "|||" + str + ":" + JsonConvert.SerializeObject(o);
             ProxyHandler.handler.apiMapping.Add(o.ToString(),target);
             return this;
         }
