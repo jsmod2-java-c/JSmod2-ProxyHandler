@@ -211,7 +211,15 @@ public class HandleCommand : Handler
     {
         string name = mapper["name"];
         string args = mapper["args"];
-        string[] argsC = Lib.getArray(args);
+        string[] argsC;
+        if (args.Equals(""))
+        {
+            argsC = new string[0];
+        }
+        else
+        {
+            argsC = Lib.getArray(args);
+        }
         string[] res = ProxyHandler.handler.CommandManager.CallCommand(ProxyHandler.handler.Server, name, argsC);
         return new []{new JsonSetting(Lib.getInt(mapper["id"]),res,null)};
     }
