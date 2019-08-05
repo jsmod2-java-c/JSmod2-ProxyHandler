@@ -143,7 +143,16 @@ namespace jsmod2
             {
                 tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")),port));
             }
-            tcp.GetStream().Write(bytes,0,bytes.Length);
+
+            try
+            {
+                tcp.GetStream().Write(bytes, 0, bytes.Length);
+            }
+            catch (Exception e)
+            {
+                Error(e.Message);
+            }
+           
         }
 
         public string getProtocol(string json1, int id,IdMapping mapping)
