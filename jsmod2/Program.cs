@@ -136,23 +136,24 @@ namespace jsmod2
         }
         private void send(string jsons,TcpClient tcp)
         {
-            int port;
-            int.TryParse(reader.get("jsmod2.port"), out port);
-            byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons)));
-            if (!tcp.Connected)
-            {
-                tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")),port));
-            }
-
             try
             {
+                int port;
+                int.TryParse(reader.get("jsmod2.port"), out port);
+                byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons)));
+                if (!tcp.Connected)
+                {
+                    tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")),port));
+                }
+            
                 tcp.GetStream().Write(bytes, 0, bytes.Length);
             }
             catch (Exception e)
             {
                 Error(e.Message);
             }
-           
+            
+
         }
 
         public string getProtocol(string json1, int id,IdMapping mapping)
