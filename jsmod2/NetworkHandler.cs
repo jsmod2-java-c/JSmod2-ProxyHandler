@@ -111,7 +111,7 @@ public class HandleAdminQuerySetAdmin : Handler
     {
         AdminQueryEvent o = api as AdminQueryEvent;
         //根据id找到api对象
-        Player admin = (Player)Lib.getObject(mapper,typeof(Player),"admin");//从json中获取设置的值，反序列化
+        Player admin = ProxyHandler.handler.apiMapping["admin"] as Player;//从json中获取设置的值，反序列化
         o.Admin = admin;//设置
         return null;
     }
