@@ -15,7 +15,7 @@ ProxyHandler作为一个Smod2插件运行在multiAdmin，并确保在启动jsmod
 
 !!!!ProxyHandler目前已经实现!!!!
 
-`总体[||||||||||||                  ]` %45
+`总体[||||||||||||                                        ]` %45
 
 1. 响应Jsmod2的事件监听器(%30)
 
