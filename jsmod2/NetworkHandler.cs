@@ -43,6 +43,11 @@ namespace jsmod2
             handlers.Add(110,new HandleDoorGetDestoryed());
             handlers.Add(112,new HandleDoorGetDontOpenOnWarhead());
             handlers.Add(116,new HandleDoorGetLocked());
+            handlers.Add(108,new HandleGetDoorOpen());
+            handlers.Add(119,new HandleGetDoorName());
+            handlers.Add(120,new HandleGetDoorPermission());
+            handlers.Add(118,new HandleDoorPosition());
+            handlers.Add(115,new SetDoorBlockAfterWarheadDetonation());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -243,6 +248,53 @@ public class HandleDoorGetLocked : Handler
     {
         Door door = api as Door;
         return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.Locked,null)};
+    }
+}
+
+public class HandleGetDoorName : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.Name,null),};
+    }
+}
+
+public class HandleGetDoorOpen : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.Open,null)};
+    }
+}
+
+public class HandleGetDoorPermission : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.Permission,null)};
+    }
+}
+
+public class HandleDoorPosition : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.Position,null)};
+    }
+}
+
+public class SetDoorBlockAfterWarheadDetonation : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        bool baw = Lib.getBool(mapper["blockAfterWarheadDetonation"]);
+        door.BlockAfterWarheadDetonation = baw;
+        return null;
     }
 }
 
