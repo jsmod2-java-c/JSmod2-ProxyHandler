@@ -39,6 +39,10 @@ namespace jsmod2
             handlers.Add(0x5a,new HandleItemSetKinematic());
             handlers.Add(0x5b,new HandleItemSetPosition());
             handlers.Add(107,new HandleCommand());
+            handlers.Add(114,new HandleDoorGetBlockAfterWarheadDetonation());
+            handlers.Add(110,new HandleDoorGetDestoryed());
+            handlers.Add(112,new HandleDoorGetDontOpenOnWarhead());
+            handlers.Add(116,new HandleDoorGetLocked());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -202,6 +206,43 @@ public class HandleItemSetPosition : Handler
         item.SetPosition(Lib.getVector(mapper["position"]));
 
         return null;
+    }
+}
+
+public class HandleDoorGetBlockAfterWarheadDetonation : Handler
+{
+    JsonSetting[] Handler.handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        bool b = door.BlockAfterWarheadDetonation;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),b,null)};
+    }
+}
+
+public class HandleDoorGetDestoryed : Handler
+{
+    JsonSetting[] Handler.handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.Destroyed,null)};
+    }
+}
+
+public class HandleDoorGetDontOpenOnWarhead : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.DontOpenOnWarhead,null)};
+    }
+}
+
+public class HandleDoorGetLocked : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),door.Locked,null)};
     }
 }
 
