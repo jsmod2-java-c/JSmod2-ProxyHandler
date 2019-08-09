@@ -12,3 +12,30 @@ multiAdmin.
 ProxyHandler作为一个Smod2插件运行在multiAdmin，并确保在启动jsmod2后再启动ProxyHandler
 
 目前ProxyHandler在开发阶段，已经实现了部分功能，其他功能待实现
+
+!!!!ProxyHandler目前已经实现!!!!
+
+`总体[||||||||||||                  ]` %45
+
+1. 响应Jsmod2的事件监听器(%30)
+
+2.已经实现解析实体的协议
+    Event(%3)
+    Door (%40)
+    Elevator (%0)
+    Generator (%0)
+    Map (%0)
+    PocketDimensionExit (%0)
+    Room (%0)
+    TeslaGate (%0)
+    Player (%0)
+    Scp079Data(%0)
+    Connection (%0)
+    Round (%0)
+    RoundStats (%0)
+    (Smod2)Server (%0)
+    TeamRole(%0)
+    UserGroup(%0)
+    Item (%100)
+    
+    
