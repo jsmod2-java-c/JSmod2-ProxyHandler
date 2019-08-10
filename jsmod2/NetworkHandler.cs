@@ -52,6 +52,13 @@ namespace jsmod2
             handlers.Add(113,new HandleDoorSetDontOpenOnWarhead());
             handlers.Add(117,new HandleDoorSetLocked());
             handlers.Add(109,new HandleDoorSetOpen());
+            handlers.Add(0x60,new HandleServerGetIpAddress());
+            handlers.Add(0x64,new HandleServerGetMaxPlayers());
+            handlers.Add(0x62,new HandleServerGetNumPlayers());
+            handlers.Add(0x63,new HandleServerGetPlayers());
+            handlers.Add(0x5f,new HandleServerGetPort());
+            handlers.Add(0x65,new HandleServerSetMaxPlayersPacket());
+            
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -172,6 +179,24 @@ public class HandleServerGetPlayers : Handler
         return settings;
     }
 }
+
+public class HandleServerGetPort : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),ProxyHandler.handler.Server.Port,null)};
+    }
+}
+
+public class HandleServerSetMaxPlayersPacket : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        ProxyHandler.handler.Server.MaxPlayers = Lib.getInt(mapper["id"]);
+        return null;
+    }
+}
+
 
 public class HandleItemDrop : Handler
 {
