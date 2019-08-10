@@ -104,8 +104,12 @@ namespace jsmod2
             {
                 ProxyHandler.handler.Error(e.Message);
             }
-           
-            ProxyHandler.handler.Info("FINISH A PACKET");
+
+            if (Lib.getBool(ProxyHandler.handler.reader.get("jsmod2.debug")))
+            {
+                ProxyHandler.handler.Info("packet: id: "+id+" json: "+json+" finish a packet about jsmod2");
+            }
+            
         }
     }
 }

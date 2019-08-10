@@ -56,6 +56,7 @@ namespace jsmod2
                 .append("this.port","19938")
                 .append("jsmod2.ip","127.0.0.1")
                 .append("jsmod2.port","19935")
+                .append("jsmod2.debug","false")
                 .create(Server.GetAppFolder()+"/jsmod2.conf");
         }
 
@@ -188,7 +189,6 @@ namespace jsmod2
             client.GetStream().Read(bytes,0,getLen(bytes));
             var utf8WithoutBom = new UTF8Encoding(false);
             string base64String = getFullBytes(client,utf8WithoutBom.GetString(toCommon(bytes))).Trim();
-            ProxyHandler.handler.Info(base64String);
             string[] base64s = base64String.Split(';');
 
             foreach (var base64 in base64s)
@@ -197,9 +197,7 @@ namespace jsmod2
                 {
                    
                     string jsmod2Request = utf8WithoutBom.GetString(Convert.FromBase64String(utf8WithoutBom.GetString(toCommon(utf8WithoutBom.GetBytes(base64)))));
-                    ProxyHandler.handler.Info("DECODE:"+jsmod2Request);
                     string json = getJson(jsmod2Request);
-                    ProxyHandler.handler.Info("JSON:"+json);
                     Dictionary<string,string> mapper = (Dictionary<string,string>)JsonConvert.DeserializeObject(json,typeof(Dictionary<string,string>));
                     int id = 0x53;
                     
