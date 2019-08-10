@@ -8,7 +8,7 @@ namespace jsmod2
         public JsonSetting(int id, object responseValue, IdMapping idMapping)
         {
             this.id = id;
-            this.responseValue = responseValue;
+            this.responseValue = responseValue == null?"{}":responseValue;
             this.idMapping = idMapping;
         }
 

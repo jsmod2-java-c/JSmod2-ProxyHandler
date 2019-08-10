@@ -15,11 +15,18 @@ namespace jsmod2
         public const string ADMIN_ID = "admin-" + ID;
         
         public const string PLAYER_SCPDATA_ID = "scp079Data-"+ID;
+
+        public const string PLAYER_TEAM_ROLE_ID = "teamRole-" + ID;
+        
         //关于playerEvent类型
         public const string PLAYER_EVENT_SCPDATA_ID = "player-"+PLAYER_SCPDATA_ID;
         
         //关于adminEvent类型
         public const string ADMIN_EVENT_SCPDATA_ID = "admin-"+PLAYER_SCPDATA_ID;
+
+        public const string PLAYER_EVENT_TEAM_ROLE_ID = "player-" + PLAYER_TEAM_ROLE_ID;
+
+        public const string ADMIN_EVENT_TEAM_ROLE_ID = "admin-" + PLAYER_TEAM_ROLE_ID;
         
         //关于itemEvent类型
         public const string ITEM_EVENT_ID = "item-"+ID;

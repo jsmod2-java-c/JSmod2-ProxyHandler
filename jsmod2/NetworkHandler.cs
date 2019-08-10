@@ -134,6 +134,45 @@ public class HandleAdminQuerySetAdmin : Handler
     }
 }
 
+public class HandleServerGetIpAddress : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]), ProxyHandler.handler.Server.IpAddress, null)};
+    }
+}
+
+public class HandleServerGetMaxPlayers : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),ProxyHandler.handler.Server.MaxPlayers,null)};
+    }
+}
+
+public class HandleServerGetNumPlayers : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),ProxyHandler.handler.Server.NumPlayers,null)};
+    }
+}
+
+public class HandleServerGetPlayers : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        List<Player> players = ProxyHandler.handler.Server.GetPlayers();
+        JsonSetting[] settings = new JsonSetting[players.ToArray().Length];
+        for (int i = 0; i < settings.Length; i++)
+        {
+            settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping().appendId(Lib.ID,Guid.NewGuid().ToString(),players[i]).appendId(Lib.PLAYER_SCPDATA_ID,Guid.NewGuid().ToString(),players[i].Scp079Data).appendId(Lib.PLAYER_TEAM_ROLE_ID,Guid.NewGuid().ToString(),players[i].TeamRole));
+        }
+
+        return settings;
+    }
+}
+
 public class HandleItemDrop : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)

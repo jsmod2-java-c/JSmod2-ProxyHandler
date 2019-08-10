@@ -8,11 +8,12 @@ namespace jsmod2
     {
         public void OnPlayerJoin(PlayerJoinEvent ev)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x2d,
+            ProxyHandler.handler.sendEventObject(ev, 0x2d,
                 new IdMapping()
-                    .appendId(Lib.ID,Guid.NewGuid().ToString(),ev)
-                    .appendId(Lib.PLAYER_ID,Guid.NewGuid().ToString(),ev.Player)
-                    .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,Guid.NewGuid().ToString(),ev.Player.Scp079Data));
+                    .appendId(Lib.ID, Guid.NewGuid().ToString(), ev)
+                    .appendId(Lib.PLAYER_ID, Guid.NewGuid().ToString(), ev.Player)
+                    .appendId(Lib.PLAYER_EVENT_SCPDATA_ID, Guid.NewGuid().ToString(), ev.Player.Scp079Data)
+                    .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID, Guid.NewGuid().ToString(), ev.Player.TeamRole));
         }
     }
 }
