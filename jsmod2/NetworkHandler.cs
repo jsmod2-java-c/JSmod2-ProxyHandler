@@ -47,7 +47,11 @@ namespace jsmod2
             handlers.Add(119,new HandleGetDoorName());
             handlers.Add(120,new HandleGetDoorPermission());
             handlers.Add(118,new HandleDoorPosition());
-            handlers.Add(115,new SetDoorBlockAfterWarheadDetonation());
+            handlers.Add(115,new HandleDoorSetBlockAfterWarheadDetonation());
+            handlers.Add(111,new HandleDoorSetDestory());
+            handlers.Add(113,new HandleDoorSetDontOpenOnWarhead());
+            handlers.Add(117,new HandleDoorSetLocked());
+            handlers.Add(109,new HandleDoorSetOpen());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -287,13 +291,54 @@ public class HandleDoorPosition : Handler
     }
 }
 
-public class SetDoorBlockAfterWarheadDetonation : Handler
+public class HandleDoorSetBlockAfterWarheadDetonation : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
     {
         Door door = api as Door;
         bool baw = Lib.getBool(mapper["blockAfterWarheadDetonation"]);
         door.BlockAfterWarheadDetonation = baw;
+        return null;
+    }
+}
+
+public class HandleDoorSetDestory : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        bool destory = Lib.getBool(mapper["destory"]);
+        door.Destroyed = destory;
+        return null;
+    }
+}
+
+public class HandleDoorSetDontOpenOnWarhead : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        door.DontOpenOnWarhead = Lib.getBool(mapper["dontOpenOnWarhead"]);
+        return null;
+    }
+}
+
+public class HandleDoorSetLocked : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        door.Locked = Lib.getBool(mapper["locked"]);
+        return null;
+    }
+}
+
+public class HandleDoorSetOpen : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Door door = api as Door;
+        door.Open = Lib.getBool(mapper["isOpen"]);
         return null;
     }
 }
