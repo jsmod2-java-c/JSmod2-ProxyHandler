@@ -58,6 +58,16 @@ namespace jsmod2
             handlers.Add(0x63,new HandleServerGetPlayers());
             handlers.Add(0x5f,new HandleServerGetPort());
             handlers.Add(0x65,new HandleServerSetMaxPlayersPacket());
+            handlers.Add(123,new HandleGetElevatorLockable());
+            handlers.Add(121,new HandleElevatorLocked());
+            handlers.Add(125,new HandleGetElevatorMovingSpeed());
+            handlers.Add(127,new HandleGetElevatorPositions());
+            handlers.Add(129,new HandleGetElevatorStatus());
+            handlers.Add(128,new HandleGetElevatorType());
+            handlers.Add(124,new HandleSetElevatorLockable());
+            handlers.Add(122,new HandleSetElevatorLocked());
+            handlers.Add(126,new HandleSetElevatorMovingSpeed());
+            handlers.Add(130,new HandleUseElevator());
             
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
@@ -124,6 +134,101 @@ namespace jsmod2
 public interface Handler
 {
     JsonSetting[] handle(object api,Dictionary<string,string> mapper);
+}
+
+public class HandleGetElevatorLockable : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),elevator.Lockable,null)};
+    }
+}
+
+public class HandleElevatorLocked : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),elevator.Locked,null)};
+    }
+}
+
+
+public class HandleGetElevatorMovingSpeed : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),elevator.MovingSpeed,null)};
+    }
+}
+
+public class HandleGetElevatorPositions : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),elevator.GetPositions(),null)};
+    }
+}
+
+public class HandleGetElevatorStatus : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),elevator.ElevatorStatus,null)};
+    }
+}
+
+public class HandleGetElevatorType : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]), elevator.ElevatorType, null)};
+    }
+}
+
+public class HandleSetElevatorLockable : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        elevator.Lockable = Lib.getBool(mapper["lockable"]);
+        return null;
+    }
+}
+
+public class HandleSetElevatorLocked : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        elevator.Locked = Lib.getBool(mapper["locked"]);
+        return null;
+    }
+}
+
+public class HandleSetElevatorMovingSpeed : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        elevator.MovingSpeed = Lib.getDouble(mapper["movingSpeed"]);
+        return null;
+    }
+}
+
+public class HandleUseElevator : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Elevator elevator = api as Elevator;
+        elevator.Use();
+        return null;
+    }
 }
 
 
