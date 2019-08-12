@@ -99,21 +99,22 @@ namespace jsmod2
         }
         
         //触发事件只发id
+        //在jsmod2的监听器执行完前不能停止，get为true，在read处阻塞
         public void sendEventObject(Event e,int id,IdMapping mapping)
         {
-            sendObject("{}",id,mapping);
+            sendObject("{}",id,mapping,true);
         }
 
-        public void sendObject(string json1, int id,IdMapping mapping)
+        public void sendObject(string json1, int id,IdMapping mapping,bool get)
         {
-            sendObject(new TcpClient(),json1,id,mapping);
+            sendObject(new TcpClient(),json1,id,mapping,get);
         }
         
-        public void sendObject(TcpClient tcp,string json1, int id,IdMapping mapping)
+        public void sendObject(TcpClient tcp,string json1, int id,IdMapping mapping,bool get)
         {
             //如何定位物品，并设置，通过itemMapping找到id归属对象(player这个字段就是id)
             //然后通过id定位到物品，并设置
-            send(getProtocol(json1,id,mapping),tcp);
+            send(getProtocol(json1,id,mapping),tcp,get);
         }
         
         //发送协议集合，用于传输物品数组，有多个不同的id
@@ -135,7 +136,8 @@ namespace jsmod2
         {
             sendObjects(new TcpClient(),settings);
         }
-        private void send(string jsons,TcpClient tcp)
+
+        private void send(string jsons, TcpClient tcp, bool get)
         {
             try
             {
@@ -144,16 +146,28 @@ namespace jsmod2
                 byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons)));
                 if (!tcp.Connected)
                 {
-                    tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")),port));
+                    tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")), port));
                 }
-            
+
                 tcp.GetStream().Write(bytes, 0, bytes.Length);
+                if (get)
+                {
+                    tcp.GetStream().ReadByte(); //停止
+                }
             }
             catch (Exception e)
             {
                 Error(e.Message);
             }
-            
+            finally
+            {
+                tcp.Close();
+            }
+        }
+        private void send(string jsons,TcpClient tcp)
+        {
+
+            send(jsons, tcp, false);
 
         }
 
