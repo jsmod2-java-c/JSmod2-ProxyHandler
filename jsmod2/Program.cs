@@ -42,7 +42,7 @@ namespace jsmod2
         public static ProxyHandler handler { get; set; }
 
 
-        public const int MAX_LENGTH = 8 * 30;
+        public const int MAX_LENGTH = 0x10 * 0x1E;
         public override void Register()
         {
             handler = this;
