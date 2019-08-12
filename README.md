@@ -22,7 +22,6 @@ ProxyHandler作为一个Smod2插件运行在multiAdmin，并确保在启动jsmod
 2.已经实现解析实体的协议:
 ```
     Event(%3)
-    Elevator (%0)
     Generator (%0)
     Map (%0)
     PocketDimensionExit (%0)
@@ -40,6 +39,7 @@ ProxyHandler作为一个Smod2插件运行在multiAdmin，并确保在启动jsmod
     Item (%100)
     Door (%100)
     (Smod2)Server (%100)
+    Elevator (%100)
     
 ``` 
     
