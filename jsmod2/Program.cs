@@ -76,7 +76,7 @@ namespace jsmod2
         {
             int port;
             int.TryParse(reader.get("this.port"), out port);
-            Info("启动了JSMOD2代理监听器，端口为"+port);
+            Info("Jsmod2 ProxyHandler is Starting,Port: "+port);
             TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse(reader.get("this.ip")),port));
             listener.Start();
             while (true)
@@ -84,7 +84,7 @@ namespace jsmod2
                 try
                 {
                     TcpClient client = listener.AcceptTcpClient();
-                    Info("监听到了一个来自jsmod2的数据包");
+                    Info("listened a request from Jsmod2");
                     WorkThread thread = new WorkThread(client);
                     Thread t = new Thread(thread.socketThread);
                     t.Start(); 

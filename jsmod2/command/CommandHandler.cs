@@ -28,13 +28,13 @@ namespace jsmod2.command
                 ServerCommandVO vo = new ServerCommandVO();
                 vo.args = args;
                 vo.commandName = name;
-                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x55,null);
+                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x55,null,false);
             }
             else if (sender is Player){
                 PlayerCommandVO vo = new PlayerCommandVO();
                 vo.args = args;
                 vo.commandName = name;
-                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x56,new IdMapping().appendId("player-playerName",Guid.NewGuid().ToString(),sender));
+                ProxyHandler.handler.sendObject(JsonConvert.SerializeObject(vo),0x56,new IdMapping().appendId("player-playerName",Guid.NewGuid().ToString(),sender),false);
             }
             return new []{"success"};
         }
