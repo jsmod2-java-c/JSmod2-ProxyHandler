@@ -52,6 +52,8 @@
     <Compile Include="event\HandlePickupItemLate.cs" />
     <Compile Include="event\HandlePickupItem.cs" />
     <Compile Include="event\HandlePlayer.cs" />
+    <Compile Include="event\HandleSetConfig.cs" />
+    <Compile Include="event\NewEventHandlers.cs" />
     <Compile Include="IdMapping.cs" />
     <Compile Include="JsonSetting.cs" />
     <Compile Include="Lib.cs" />

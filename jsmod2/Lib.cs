@@ -34,6 +34,21 @@ namespace jsmod2
         //关于authCheck类型
         public const string AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID = "requester-"+PLAYER_SCPDATA_ID;
 
+        public const string EVENT_GENERATOR_ID = "generator-" + ID;
+
+        public const string EVENT_GENERATOR_ROOM_ID = "generator-room-" + ID;
+
+        public const string EVENT_USER_ID = "user-" + ID;
+
+        public const string EVENT_USER_SCPDATA_ID = "user-" + PLAYER_SCPDATA_ID;
+
+        public const string EVENT_USER_TEAMROLE_ID = "user-" + PLAYER_TEAM_ROLE_ID;
+
+        public const string EVENT_DEAD_ID = "deadPlayer-" + ID;
+
+        public const string EVENT_DEAD_SCPDATA_ID = "deadPlayer-" + PLAYER_SCPDATA_ID;
+
+        public const string EVENT_DEAD_TEAMROLE_ID = "deadPlayer-" + PLAYER_TEAM_ROLE_ID;
 
         public static object getObject(Dictionary<string, string> dic, Type type,string name)
         {

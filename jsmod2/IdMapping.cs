@@ -23,5 +23,10 @@ namespace jsmod2
         {
             return append;
         }
+
+        public IdMapping appendId(string fields, object target)
+        {
+            return appendId(fields, Guid.NewGuid().ToString(), target);
+        }
     }
 }

@@ -8,13 +8,13 @@ namespace jsmod2
     {
         public void OnAdminQuery(AdminQueryEvent ev)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x01,
+            ProxyHandler.handler.sendEventObject(ev, 0x01,
                 new IdMapping()
-                    .appendId(Lib.ID,System.Guid.NewGuid().ToString(),ev)
-                    .appendId(Lib.ADMIN_ID,System.Guid.NewGuid().ToString(),ev.Admin)
-                    .appendId(Lib.ADMIN_EVENT_SCPDATA_ID,System.Guid.NewGuid().ToString(),ev.Admin.Scp079Data)
-                    .appendId(Lib.ADMIN_EVENT_TEAM_ROLE_ID,Guid.NewGuid().ToString(),ev.Admin.TeamRole)
-                );
+                    .appendId(Lib.ID, System.Guid.NewGuid().ToString(), ev)
+                    .appendId(Lib.ADMIN_ID, System.Guid.NewGuid().ToString(), ev.Admin)
+                    .appendId(Lib.ADMIN_EVENT_SCPDATA_ID, System.Guid.NewGuid().ToString(), ev.Admin.Scp079Data)
+                    .appendId(Lib.ADMIN_EVENT_TEAM_ROLE_ID, Guid.NewGuid().ToString(), ev.Admin.TeamRole)
+            );
         }
     }
 }
