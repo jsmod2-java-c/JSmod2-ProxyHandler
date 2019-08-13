@@ -39,6 +39,14 @@ namespace jsmod2
 
         public const string OWNER_ID = "owner-" + ID;
 
+        public const string CONNECTION_ID = "connection-" + ID;
+
+        public const string ROUND_ID = "round-" + ID;
+
+        public const string STATS_ID = "stats-" + ID;
+
+        public const string ROUND_STATS_ID = "round-" + STATS_ID;
+
         //关于authCheck类型
         public const string AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID = "requester-"+PLAYER_SCPDATA_ID;
 
@@ -85,17 +93,17 @@ namespace jsmod2
 
         public const string TARGET_ID = "target-" + ID;
         
-        public const string ATTACKER_TARGET_SCPDATA_ID = "target-"+ PLAYER_SCPDATA_ID;
+        public const string EVENT_TARGET_SCPDATA_ID = "target-"+ PLAYER_SCPDATA_ID;
 
-        public const string ATTACKER_TARGET_TEAMROLE_ID = "target-" + PLAYER_TEAM_ROLE_ID;
+        public const string EVENT_TARGET_TEAMROLE_ID = "target-" + PLAYER_TEAM_ROLE_ID;
         
         //Attacker
 
         public const string ATTACKER_ID = "attacker-" + ID;
         
-        public const string ATTACKER_OWNER_SCPDATA_ID = "attacker-" + PLAYER_SCPDATA_ID;
+        public const string EVENT_ATTACKE_SCPDATA_ID = "attacker-" + PLAYER_SCPDATA_ID;
 
-        public const string ATTACKER_OWNER_TEAMROLE_ID = "attacker-" + PLAYER_TEAM_ROLE_ID;
+        public const string EVENT_ATTACKER_TEAMROLE_ID = "attacker-" + PLAYER_TEAM_ROLE_ID;
 
         public static object getObject(Dictionary<string, string> dic, Type type,string name)
         {

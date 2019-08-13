@@ -448,8 +448,8 @@ namespace jsmod2
                 .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
                 .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
                 .appendId(Lib.ATTACKER_ID,ev.Attacker)
-                .appendId(Lib.ATTACKER_OWNER_SCPDATA_ID,ev.Attacker.Scp079Data)
-                .appendId(Lib.ATTACKER_OWNER_TEAMROLE_ID,ev.Attacker.TeamRole)
+                .appendId(Lib.EVENT_ATTACKE_SCPDATA_ID,ev.Attacker.Scp079Data)
+                .appendId(Lib.EVENT_ATTACKER_TEAMROLE_ID,ev.Attacker.TeamRole)
             );
         }
 
@@ -514,8 +514,8 @@ namespace jsmod2
                 .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
                 .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
                 .appendId(Lib.ATTACKER_ID,ev.Attacker)
-                .appendId(Lib.ATTACKER_OWNER_SCPDATA_ID,ev.Attacker.Scp079Data)
-                .appendId(Lib.ATTACKER_OWNER_TEAMROLE_ID,ev.Attacker.TeamRole)
+                .appendId(Lib.EVENT_ATTACKE_SCPDATA_ID,ev.Attacker.Scp079Data)
+                .appendId(Lib.EVENT_ATTACKER_TEAMROLE_ID,ev.Attacker.TeamRole)
             );
         }
 
@@ -543,142 +543,211 @@ namespace jsmod2
                 .appendId(Lib.PLAYER_ID,  ev.Player)
                 .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
                 .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.TARGET_ID,ev.Target)
+                .appendId(Lib.EVENT_TARGET_SCPDATA_ID,ev.Target.Scp079Data)
+                .appendId(Lib.EVENT_TARGET_TEAMROLE_ID,ev.Target.TeamRole)
             );
         }
 
         public void OnReload(PlayerReloadEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnSCP914ChangeKnob(PlayerSCP914ChangeKnobEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnSetRole(PlayerSetRoleEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.PLAYER_TEAM_ROLE_ID,ev.TeamRole)
+            );
         }
 
         public void OnShoot(PlayerShootEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.TARGET_ID,ev.Target)
+                .appendId(Lib.EVENT_TARGET_SCPDATA_ID,ev.Target.Scp079Data)
+                .appendId(Lib.EVENT_TARGET_TEAMROLE_ID,ev.Target.TeamRole)
+            );
+            
         }
 
         public void OnSpawn(PlayerSpawnEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnSpawnRagdoll(PlayerSpawnRagdollEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ATTACKER_ID,ev.Attacker)
+                .appendId(Lib.EVENT_ATTACKE_SCPDATA_ID,ev.Attacker.Scp079Data)
+                .appendId(Lib.EVENT_ATTACKER_TEAMROLE_ID,ev.Attacker.TeamRole)
+            );
         }
 
         public void OnThrowGrenade(PlayerThrowGrenadeEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.TESLAGATE_ID,ev.TeslaGate)
+            );
         }
 
         public void OnScp096CooldownEnd(Scp096CooldownEndEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnScp096CooldownStart(Scp096CooldownStartEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnScp096Enrage(Scp096EnrageEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnScp096Panic(Scp096PanicEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnConnect(ConnectEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.CONNECTION_ID,ev.Connection)
+            );
         }
 
         public void OnDisconnect(DisconnectEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.CONNECTION_ID,ev.Connection)
+            );
         }
 
         public void OnFixedUpdate(FixedUpdateEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnLateDisconnect(LateDisconnectEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.CONNECTION_ID,ev.Connection)
+            );
         }
 
         public void OnLateUpdate(LateUpdateEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnRoundEnd(RoundEndEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.ROUND_ID,ev.Round)
+                .appendId(Lib.ROUND_STATS_ID,ev.Round.Stats)
+            );
         }
 
         public void OnRoundRestart(RoundRestartEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnSceneChanged(SceneChangedEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnSetServerName(SetServerNameEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnUpdate(UpdateEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnDecideTeamRespawnQueue(DecideRespawnQueueEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnSetNTFUnitName(SetNTFUnitNameEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnSetSCPConfig(SetSCPConfigEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
 
         public void OnTeamRespawn(TeamRespawnEvent ev)
         {
-            throw new NotImplementedException();
+            send(ev,new IdMapping());
         }
     }
 }
