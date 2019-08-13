@@ -1,3 +1,4 @@
+using System;
 using Smod2.EventHandlers;
 using Smod2.Events;
 using Smod2.EventSystem.Events;
@@ -18,613 +19,666 @@ namespace jsmod2
                                     IEventHandlerSpawn,IEventHandlerSpawnRagdoll,IEventHandlerThrowGrenade,IEventHandlerPlayerTriggerTesla,IEventHandlerScp096CooldownEnd,IEventHandlerScp096CooldownStart,
                                     IEventHandlerScp096Enrage,IEventHandlerScp096Panic,IEventHandlerConnect,IEventHandlerDisconnect,IEventHandlerFixedUpdate,IEventHandlerLateDisconnect,IEventHandlerLateUpdate,
                                     IEventHandlerRoundEnd,IEventHandlerRoundRestart,IEventHandlerSceneChanged,IEventHandlerSetServerName,IEventHandlerUpdate,IEventHandlerWaitingForPlayers,IEventHandlerDecideTeamRespawnQueue,
-                                    IEventHandlerSetNTFUnitName,IEventHandlerSetSCPConfig,IEventHandlerTeamRespawn
+                                    IEventHandlerSetNTFUnitName,IEventHandlerSetSCPConfig,IEventHandlerTeamRespawn,IEventHandlerAdminQuery,IEventHandlerAuthCheck,IEventHandlerBan,IEventHandlerPlayerPickupItem,
+                                    IEventHandlerPlayerPickupItemLate,IEventHandlerPlayerJoin,IEventHandlerSetConfig
                                     
 
     {
-        public void OnGeneratorFinish(GeneratorFinishEvent ev)
+
+        public void send(Event e, IdMapping mapping)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x06,new IdMapping()
-                .appendId(Lib.ID,ev)
+            ProxyHandler.handler.sendEventObject(e,mapping.appendId(Lib.ID,e));
+        }
+
+        public void send(Type t, IdMapping mapping)
+        {
+            ProxyHandler.handler.sendEventObject(t,mapping);
+        }
+
+        public void send(Type t)
+        {
+            send(t,new IdMapping().appendId(Lib.ID,""));
+        }
+        
+        void IEventHandlerSetConfig.OnSetConfig(SetConfigEvent ev)
+        {
+            send(ev,new IdMapping());
+        }
+        void IEventHandlerPlayerPickupItemLate.OnPlayerPickupItemLate(PlayerPickupItemLateEvent ev)
+        {
+            send(ev,
+                new IdMapping()
+                    .appendId(Lib.ITEM_EVENT_ID,ev.Item)
+                    .appendId(Lib.PLAYER_ID, ev.Player)
+                    .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                    .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                
+            );
+        }
+        
+        void IEventHandlerPlayerJoin.OnPlayerJoin(PlayerJoinEvent ev)
+        {
+            send(ev, 
+                new IdMapping()
+                    .appendId(Lib.PLAYER_ID, ev.Player)
+                    .appendId(Lib.PLAYER_EVENT_SCPDATA_ID, ev.Player.Scp079Data)
+                    .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID, ev.Player.TeamRole));
+        }
+        void IEventHandlerPlayerPickupItem.OnPlayerPickupItem(PlayerPickupItemEvent ev)
+        {
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ITEM_EVENT_ID,ev.Item)
+            );
+        }
+        void IEventHandlerBan.OnBan(BanEvent ev)
+        {
+            send(ev, 
+                new IdMapping()
+                    .appendId(Lib.ADMIN_ID,  ev.Admin)
+                    .appendId(Lib.ADMIN_EVENT_SCPDATA_ID,  ev.Admin.Scp079Data)
+                    .appendId(Lib.ADMIN_EVENT_TEAM_ROLE_ID,ev.Admin.TeamRole)
+                    .appendId(Lib.PLAYER_ID,  ev.Player)
+                    .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                    .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                        
+            );
+                
+        }
+        void IEventHandlerAuthCheck.OnAuthCheck(AuthCheckEvent ev)
+        {
+            send(ev, 
+                new IdMapping()
+                    .appendId("requester-" + Lib.ID, ev.Requester)
+                    .appendId(Lib.AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID, 
+                        ev.Requester.Scp079Data).appendId("requester-"+Lib.PLAYER_TEAM_ROLE_ID,ev.Requester.TeamRole));
+
+        }
+        void IEventHandlerAdminQuery.OnAdminQuery(AdminQueryEvent ev)
+        {
+            send(ev, 
+                new IdMapping()
+                    .appendId(Lib.ADMIN_ID, ev.Admin)
+                    .appendId(Lib.ADMIN_EVENT_SCPDATA_ID,  ev.Admin.Scp079Data)
+                    .appendId(Lib.ADMIN_EVENT_TEAM_ROLE_ID, ev.Admin.TeamRole)
+            );
+        }
+
+
+
+        void IEventHandlerGeneratorFinish.OnGeneratorFinish(GeneratorFinishEvent ev)
+        {
+            
+            send(ev,new IdMapping()
                 .appendId(Lib.EVENT_GENERATOR_ID,ev.Generator)
                 .appendId(Lib.EVENT_GENERATOR_ROOM_ID,ev.Generator.Room)
             );
         }
 
-        public void OnDecontaminate()
+        void IEventHandlerLCZDecontaminate.OnDecontaminate()
         {
-            ProxyHandler.handler.sendEventObject(null,0x07,new IdMapping().appendId(Lib.ID,""));
+            send(typeof(LCZDecontaminateEvent));
         }
 
-        public void OnSCP914Activate(SCP914ActivateEvent ev)
+        void IEventHandlerSCP914Activate.OnSCP914Activate(SCP914ActivateEvent ev)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x08,new IdMapping()
-                .appendId(Lib.ID,ev)
+            send(ev,new IdMapping()
                 .appendId(Lib.EVENT_USER_ID,ev.User)
                 .appendId(Lib.EVENT_USER_SCPDATA_ID,ev.User.Scp079Data)
                 .appendId(Lib.EVENT_USER_TEAMROLE_ID,ev.User.TeamRole)
             );
         }
 
-        public void OnScpDeathAnnouncement(ScpDeathAnnouncementEvent ev)
+        void IEventHandlerScpDeathAnnouncement.OnScpDeathAnnouncement(ScpDeathAnnouncementEvent ev)
         {
-            ProxyHandler.handler.sendEventObject(ev,0x09,new IdMapping()
-                .appendId(Lib.ID,ev)
+            send(ev,new IdMapping()
                 .appendId(Lib.EVENT_DEAD_ID,ev.DeadPlayer)
                 .appendId(Lib.EVENT_DEAD_SCPDATA_ID,ev.DeadPlayer.Scp079Data)
                 .appendId(Lib.EVENT_DEAD_TEAMROLE_ID,ev.DeadPlayer.TeamRole)
             );
         }
 
-        public void OnSummonVehicle(SummonVehicleEvent ev)
-        {
-            ProxyHandler.handler.sendEventObject(ev,0x0a,new IdMapping()
-                .appendId(Lib.ID,ev)
-            );
-        }
-
-        public void OnChangeLever(WarheadChangeLeverEvent ev)
-        {
-            ProxyHandler.handler.sendEventObject(ev,0x0b,new IdMapping()
-                .appendId(Lib.PLAYER_ID,ev.Player)
-                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,ev.Player.Scp079Data)
-                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
-            );
-        }
-
-        void IEventHandlerGeneratorFinish.OnGeneratorFinish(GeneratorFinishEvent ev)
-        {
-            OnGeneratorFinish(ev);
-        }
-
-        void IEventHandlerLCZDecontaminate.OnDecontaminate()
-        {
-            OnDecontaminate();
-        }
-
-        void IEventHandlerSCP914Activate.OnSCP914Activate(SCP914ActivateEvent ev)
-        {
-            OnSCP914Activate(ev);
-        }
-
-        void IEventHandlerScpDeathAnnouncement.OnScpDeathAnnouncement(ScpDeathAnnouncementEvent ev)
-        {
-            OnScpDeathAnnouncement(ev);
-        }
-
         void IEventHandlerSummonVehicle.OnSummonVehicle(SummonVehicleEvent ev)
         {
-            OnSummonVehicle(ev);
+            send(ev,new IdMapping());
         }
 
         void IEventHandlerWarheadChangeLever.OnChangeLever(WarheadChangeLeverEvent ev)
         {
-            OnChangeLever(ev);
-        }
-
-        public void OnDetonate()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnWarheadKeycardAccess(WarheadKeycardAccessEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnStartCountdown(WarheadStartEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079AddExp(Player079AddExpEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079CameraTeleport(Player079CameraTeleportEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079Door(Player079DoorEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079ElevatorTeleport(Player079ElevatorTeleportEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079LevelUp(Player079LevelUpEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079Lockdown(Player079LockdownEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079Lock(Player079LockEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079StartSpeaker(Player079StartSpeakerEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079StopSpeaker(Player079StopSpeakerEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079TeslaGate(Player079TeslaGateEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On079UnlockDoors(Player079UnlockDoorsEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On106CreatePortal(Player106CreatePortalEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void On106Teleport(Player106TeleportEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnCallCommand(PlayerCallCommandEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnCheckEscape(PlayerCheckEscapeEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnContain106(PlayerContain106Event ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnPlayerDie(PlayerDeathEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnPlayerDropItem(PlayerDropItemEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnElevatorUse(PlayerElevatorUseEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGeneratorAccess(PlayerGeneratorAccessEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGeneratorEjectTablet(PlayerGeneratorEjectTabletEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGeneratorInsertTablet(PlayerGeneratorInsertTabletEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGeneratorUnlock(PlayerGeneratorUnlockEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGrenadeExplosion(PlayerGrenadeExplosion ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGrenadeHitPlayer(PlayerGrenadeHitPlayer ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnHandcuffed(PlayerHandcuffedEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnPlayerHurt(PlayerHurtEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnAssignTeam(PlayerInitialAssignTeamEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnIntercomCooldownCheck(PlayerIntercomCooldownCheckEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnIntercom(PlayerIntercomEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnLure(PlayerLureEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnMakeNoise(PlayerMakeNoiseEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnMedkitUse(PlayerMedkitUseEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnPocketDimensionEnter(PlayerPocketDimensionEnterEvent ev)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnPocketDimensionExit(PlayerPocketDimensionExitEvent ev)
-        {
-            throw new System.NotImplementedException();
+            
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerWarheadDetonate.OnDetonate()
         {
-            OnDetonate();
+            send(typeof(WarheadDetonateEvent));
         }
 
         void IEventHandlerWarheadKeycardAccess.OnWarheadKeycardAccess(WarheadKeycardAccessEvent ev)
         {
-            OnWarheadKeycardAccess(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerWarheadStartCountdown.OnStartCountdown(WarheadStartEvent ev)
         {
-            OnStartCountdown(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.EVENT_ACTIVATOR_ID,ev.Activator)
+                .appendId(Lib.EVENT_ACTIVATOR_SCPDATA_ID,ev.Activator.Scp079Data)
+                .appendId(Lib.EVENT_ACTIVATOR_TEAMROLE_ID,ev.Activator.TeamRole)
+            );
         }
 
         void IEventHandler079AddExp.On079AddExp(Player079AddExpEvent ev)
         {
-            On079AddExp(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );  
         }
 
         void IEventHandler079CameraTeleport.On079CameraTeleport(Player079CameraTeleportEvent ev)
         {
-            On079CameraTeleport(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandler079Door.On079Door(Player079DoorEvent ev)
         {
-            On079Door(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.EVENT_DOOR_ID,ev.Door)
+            );
+            //Door
         }
 
         void IEventHandler079ElevatorTeleport.On079ElevatorTeleport(Player079ElevatorTeleportEvent ev)
         {
-            On079ElevatorTeleport(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.EVENT_ELEVATOR_ID,ev.Elevator)
+            );
         }
 
         void IEventHandler079LevelUp.On079LevelUp(Player079LevelUpEvent ev)
         {
-            On079LevelUp(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandler079Lockdown.On079Lockdown(Player079LockdownEvent ev)
         {
-            On079Lockdown(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ROOM_ID,ev.Room)
+            );
         }
 
         void IEventHandler079Lock.On079Lock(Player079LockEvent ev)
         {
-            On079Lock(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.EVENT_DOOR_ID,ev.Door)
+            );
+            
         }
 
         void IEventHandler079StartSpeaker.On079StartSpeaker(Player079StartSpeakerEvent ev)
         {
-            On079StartSpeaker(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ROOM_ID,ev.Room)
+            );
         }
 
         void IEventHandler079StopSpeaker.On079StopSpeaker(Player079StopSpeakerEvent ev)
         {
-            On079StopSpeaker(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ROOM_ID,ev.Room)
+            );
         }
 
         void IEventHandler079TeslaGate.On079TeslaGate(Player079TeslaGateEvent ev)
         {
-            On079TeslaGate(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.TESLAGATE_ID,ev.TeslaGate)
+            );
         }
 
         void IEventHandler079UnlockDoors.On079UnlockDoors(Player079UnlockDoorsEvent ev)
         {
-            On079UnlockDoors(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandler106CreatePortal.On106CreatePortal(Player106CreatePortalEvent ev)
         {
-            On106CreatePortal(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandler106Teleport.On106Teleport(Player106TeleportEvent ev)
         {
-            On106Teleport(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerCallCommand.OnCallCommand(PlayerCallCommandEvent ev)
         {
-            OnCallCommand(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerCheckEscape.OnCheckEscape(PlayerCheckEscapeEvent ev)
         {
-            OnCheckEscape(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerContain106.OnContain106(PlayerContain106Event ev)
         {
-            OnContain106(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerPlayerDie.OnPlayerDie(PlayerDeathEvent ev)
         {
-            OnPlayerDie(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.EVENT_KILLER_ID,ev.Killer)
+                .appendId(Lib.EVENT_KILLER_SCPDATA_ID,ev.Killer.Scp079Data)
+                .appendId(Lib.EVENT_KILLER_TEAMROLE_ID,ev.Killer.TeamRole)
+            
+            );
         }
 
         void IEventHandlerPlayerDropItem.OnPlayerDropItem(PlayerDropItemEvent ev)
         {
-            OnPlayerDropItem(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ITEM_EVENT_ID,ev.Item)
+            );
         }
 
         void IEventHandlerElevatorUse.OnElevatorUse(PlayerElevatorUseEvent ev)
         {
-            OnElevatorUse(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.EVENT_ELEVATOR_ID,ev.Elevator)
+            );
         }
 
         void IEventHandlerGeneratorAccess.OnGeneratorAccess(PlayerGeneratorAccessEvent ev)
         {
-            OnGeneratorAccess(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.EVENT_GENERATOR_ID,ev.Generator)
+                .appendId(Lib.EVENT_GENERATOR_ROOM_ID,ev.Generator.Room)
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerGeneratorEjectTablet.OnGeneratorEjectTablet(PlayerGeneratorEjectTabletEvent ev)
         {
-            OnGeneratorEjectTablet(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.EVENT_GENERATOR_ID,ev.Generator)
+                .appendId(Lib.EVENT_GENERATOR_ROOM_ID,ev.Generator.Room)
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerGeneratorInsertTablet.OnGeneratorInsertTablet(PlayerGeneratorInsertTabletEvent ev)
         {
-            OnGeneratorInsertTablet(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.EVENT_GENERATOR_ID,ev.Generator)
+                .appendId(Lib.EVENT_GENERATOR_ROOM_ID,ev.Generator.Room)
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerGeneratorUnlock.OnGeneratorUnlock(PlayerGeneratorUnlockEvent ev)
         {
-            OnGeneratorUnlock(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.EVENT_GENERATOR_ID,ev.Generator)
+                .appendId(Lib.EVENT_GENERATOR_ROOM_ID,ev.Generator.Room)
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerGrenadeExplosion.OnGrenadeExplosion(PlayerGrenadeExplosion ev)
         {
-            OnGrenadeExplosion(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerGrenadeHitPlayer.OnGrenadeHitPlayer(PlayerGrenadeHitPlayer ev)
         {
-            OnGrenadeHitPlayer(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.VICTIM_ID,ev.Victim)
+                .appendId(Lib.EVENT_VICTIM_SCPDATA_ID,ev.Victim.Scp079Data)
+                .appendId(Lib.EVENT_VICTIM_TEAMROLE_ID,ev.Victim.TeamRole)
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );  
         }
 
         void IEventHandlerHandcuffed.OnHandcuffed(PlayerHandcuffedEvent ev)
         {
-            OnHandcuffed(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.OWNER_ID,ev.Owner)
+                .appendId(Lib.EVENT_OWNER_SCPDATA_ID,ev.Owner.Scp079Data)
+                .appendId(Lib.EVENT_OWNER_TEAMROLE_ID,ev.Owner.TeamRole)
+            );
         }
 
         void IEventHandlerPlayerHurt.OnPlayerHurt(PlayerHurtEvent ev)
         {
-            OnPlayerHurt(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ATTACKER_ID,ev.Attacker)
+                .appendId(Lib.ATTACKER_OWNER_SCPDATA_ID,ev.Attacker.Scp079Data)
+                .appendId(Lib.ATTACKER_OWNER_TEAMROLE_ID,ev.Attacker.TeamRole)
+            );
         }
 
         void IEventHandlerInitialAssignTeam.OnAssignTeam(PlayerInitialAssignTeamEvent ev)
         {
-            OnAssignTeam(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerIntercomCooldownCheck.OnIntercomCooldownCheck(PlayerIntercomCooldownCheckEvent ev)
         {
-            OnIntercomCooldownCheck(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerIntercom.OnIntercom(PlayerIntercomEvent ev)
         {
-            OnIntercom(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerLure.OnLure(PlayerLureEvent ev)
         {
-            OnLure(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerMakeNoise.OnMakeNoise(PlayerMakeNoiseEvent ev)
         {
-            OnMakeNoise(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerMedkitUse.OnMedkitUse(PlayerMedkitUseEvent ev)
         {
-            OnMedkitUse(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         void IEventHandlerPocketDimensionEnter.OnPocketDimensionEnter(PlayerPocketDimensionEnterEvent ev)
         {
-            OnPocketDimensionEnter(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ATTACKER_ID,ev.Attacker)
+                .appendId(Lib.ATTACKER_OWNER_SCPDATA_ID,ev.Attacker.Scp079Data)
+                .appendId(Lib.ATTACKER_OWNER_TEAMROLE_ID,ev.Attacker.TeamRole)
+            );
         }
 
         void IEventHandlerPocketDimensionExit.OnPocketDimensionExit(PlayerPocketDimensionExitEvent ev)
         {
-            OnPocketDimensionExit(ev);
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnPlayerRadioSwitch(PlayerRadioSwitchEvent ev)
         {
-            throw new System.NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnRecallZombie(PlayerRecallZombieEvent ev)
         {
-            throw new System.NotImplementedException();
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+            );
         }
 
         public void OnReload(PlayerReloadEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSCP914ChangeKnob(PlayerSCP914ChangeKnobEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSetRole(PlayerSetRoleEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnShoot(PlayerShootEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSpawn(PlayerSpawnEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSpawnRagdoll(PlayerSpawnRagdollEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnThrowGrenade(PlayerThrowGrenadeEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnScp096CooldownEnd(Scp096CooldownEndEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnScp096CooldownStart(Scp096CooldownStartEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnScp096Enrage(Scp096EnrageEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnScp096Panic(Scp096PanicEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnConnect(ConnectEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnDisconnect(DisconnectEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnFixedUpdate(FixedUpdateEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnLateDisconnect(LateDisconnectEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnLateUpdate(LateUpdateEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnRoundEnd(RoundEndEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnRoundRestart(RoundRestartEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSceneChanged(SceneChangedEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSetServerName(SetServerNameEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnUpdate(UpdateEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnDecideTeamRespawnQueue(DecideRespawnQueueEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSetNTFUnitName(SetNTFUnitNameEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnSetSCPConfig(SetSCPConfigEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnTeamRespawn(TeamRespawnEvent ev)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

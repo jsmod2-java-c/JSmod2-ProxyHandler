@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Smod2;
 using Smod2.Attributes;
 using Smod2.Events;
+using Smod2.EventSystem.Events;
 
 namespace jsmod2
 {
@@ -30,6 +31,104 @@ namespace jsmod2
     //最新的设计 2019 7 24
     //在触发事件时，将不发出event的序列化对象，而是只发出apiId，之后的数据获取通过发包(GetPacket)获取
     //其他响应也是如此，不发对象，而是只发apiId（Vector则需要发送序列化对象，其他序列化对象设置为字符串""，apiId在apiMapper添加）
+
+    public class RegisterEvents
+    {
+        private static HashMap<int,Type> events = new HashMap<int,Type>();
+        
+        private static HashMap<Type,int> events_Id = new HashMap<Type,int>();
+        public static void registerEvents()
+        {
+            events.put(0x01,typeof( AdminQueryEvent));//packet 1
+            events.put(0x03,typeof( AuthCheckEvent));//packet 1
+            events.put(0x04,typeof( BanEvent));//packet 1
+            events.put(0x05,typeof( SetConfigEvent));//packet 1
+            events.put(0x06,typeof( GeneratorFinishEvent));//p  \1
+            events.put(0x07,typeof( LCZDecontaminateEvent));//p
+        events.put(0x08,typeof( SCP914ActivateEvent));//p
+        events.put(0x09,typeof( ScpDeathAnnouncementEvent));//p
+        events.put(0x0a,typeof( SummonVehicleEvent));//p
+        events.put(0x0b,typeof(WarheadChangeLeverEvent));//p 1
+        events.put(0x0c,typeof(WarheadDetonateEvent));//p
+        events.put(0x0d,typeof(WarheadKeycardAccessEvent));//p
+        events.put(0x0e,typeof(WarheadStartEvent));//p
+        events.put(0x0f,typeof( Player079AddExpEvent));//p
+        events.put(0x10,typeof( Player079CameraTeleportEvent));//p
+        events.put(0x11,typeof( Player079DoorEvent));
+        events.put(0x12,typeof( Player079ElevatorTeleportEvent));
+        events.put(0x13,typeof( Player079LevelUpEvent));
+        events.put(0x14,typeof(Player079LockdownEvent));
+        events.put(0x15,typeof(Player079LockEvent));
+        events.put(0x16,typeof(Player079StartSpeakerEvent));
+        events.put(0x17,typeof(Player079StopSpeakerEvent));
+        events.put(0x18,typeof(Player079TeslaGateEvent));
+        events.put(0x19,typeof(Player079UnlockDoorsEvent));
+        events.put(0x1a,typeof(Player106CreatePortalEvent));
+        events.put(0x1b,typeof(Player106TeleportEvent));
+        events.put(0x1c,typeof(PlayerCallCommandEvent));
+        events.put(0x1d,typeof(PlayerCheckEscapeEvent));
+        events.put(0x1e,typeof(PlayerContain106Event));
+        events.put(0x1f,typeof(PlayerDeathEvent));
+        events.put(0x20,typeof(PlayerDropItemEvent));
+        events.put(0x21,typeof(PlayerElevatorUseEvent));
+        events.put(0x22,typeof(PlayerGeneratorAccessEvent));
+        events.put(0x23,typeof(PlayerGeneratorEjectTabletEvent));
+        events.put(0x24,typeof(PlayerGeneratorInsertTabletEvent));
+        events.put(0x25,typeof(PlayerGeneratorUnlockEvent));
+        events.put(0x26,typeof(PlayerGrenadeExplosion));
+        events.put(0x27,typeof(PlayerGrenadeHitPlayer));
+        events.put(0x28,typeof(PlayerHandcuffedEvent));
+        events.put(0x29,typeof(PlayerHurtEvent));
+        events.put(0x2a,typeof(PlayerInitialAssignTeamEvent));
+        events.put(0x2b,typeof(PlayerIntercomCooldownCheckEvent));
+        events.put(0x2c,typeof(PlayerIntercomEvent));
+        events.put(0x2d,typeof(PlayerJoinEvent));// 1
+        events.put(0x2e,typeof(PlayerLureEvent));
+        events.put(0x2f,typeof(PlayerMakeNoiseEvent));
+        events.put(0x30,typeof(PlayerMedkitUseEvent));
+        events.put(0x31,typeof(PlayerPickupItemEvent));// 1
+        events.put(0x32,typeof(PlayerPickupItemLateEvent));// 1
+        events.put(0x33,typeof(PlayerPocketDimensionEnterEvent));
+        events.put(0x34,typeof(PlayerPocketDimensionExitEvent));
+        events.put(0x35,typeof(PlayerRadioSwitchEvent));
+        events.put(0x36,typeof(PlayerRecallZombieEvent));
+        events.put(0x37,typeof(PlayerReloadEvent));
+        events.put(0x38,typeof(PlayerSCP914ChangeKnobEvent));
+        events.put(0x39,typeof(PlayerSetRoleEvent));
+        events.put(0x3a,typeof(PlayerShootEvent));
+        events.put(0x3b,typeof(PlayerSpawnEvent));
+        events.put(0x3c,typeof(PlayerSpawnRagdollEvent));
+        events.put(0x3d,typeof(PlayerThrowGrenadeEvent));//
+        events.put(0x3e,typeof(PlayerTriggerTeslaEvent));
+        events.put(0x3f,typeof(Scp096CooldownEndEvent));
+        events.put(0x40,typeof(Scp096CooldownStartEvent));
+        events.put(0x41,typeof(Scp096EnrageEvent));
+        events.put(0x42,typeof(Scp096PanicEvent));
+        events.put(0x43,typeof( ConnectEvent));
+        events.put(0x44,typeof( DisconnectEvent));
+        events.put(0x45,typeof( FixedUpdateEvent));
+        events.put(0x46,typeof(LateDisconnectEvent));
+        events.put(0x47,typeof( LateUpdateEvent));//
+        events.put(0x48,typeof(RoundEndEvent));
+        events.put(0x49,typeof(RoundRestartEvent));//
+        events.put(0x4a,typeof(RoundStartEvent));
+        events.put(0x4b,typeof(SceneChangedEvent));
+        events.put(0x4c,typeof(SetServerNameEvent));
+        events.put(0x4d,typeof(UpdateEvent));
+        events.put(0x4e,typeof(WaitingForPlayersEvent));
+        events.put(0x4f,typeof( DecideRespawnQueueEvent));
+        events.put(0x50,typeof( SetNTFUnitNameEvent));
+        events.put(0x51,typeof( SetSCPConfigEvent));
+        events.put(0x52,typeof( TeamRespawnEvent));
+        events_Id = events.keyToValue();
+        }
+
+        public static int getId(Type t)
+        {
+            return events_Id.get(t);
+        }
+        
+    }
     class ProxyHandler : Plugin
     {
 
@@ -46,19 +145,15 @@ namespace jsmod2
         public override void Register()
         {
             handler = this;
-            AddEventHandlers(new HandleAdmin());
-            AddEventHandlers(new HandleAuthCheck());
-            AddEventHandlers(new HandleBan());
-            AddEventHandlers(new HandlePickupItemLate());
-            AddEventHandlers(new HandlePlayer());
-            AddEventHandlers(new HandlePickupItem());
-            AddEventHandlers(new HandleSetConfig());
+            RegisterEvents.registerEvents();
+            AddEventHandlers(new NewEventHandlers());
             reader.append("this.ip","127.0.0.1")
                 .append("this.port","19938")
                 .append("jsmod2.ip","127.0.0.1")
                 .append("jsmod2.port","19935")
                 .append("jsmod2.debug","false")
                 .create(Server.GetAppFolder()+"/jsmod2.conf");
+            
         }
 
         public override void OnEnable()
@@ -104,6 +199,16 @@ namespace jsmod2
         public void sendEventObject(Event e,int id,IdMapping mapping)
         {
             sendObject("{}",id,mapping,true);
+        }
+
+        public void sendEventObject(Event e, IdMapping mapping)
+        {
+            sendEventObject(e.GetType(),mapping);
+        }
+
+        public void sendEventObject(Type t,IdMapping mapping)
+        {
+            sendEventObject(null,RegisterEvents.getId(t),mapping);
         }
 
         public void sendObject(string json1, int id,IdMapping mapping,bool get)

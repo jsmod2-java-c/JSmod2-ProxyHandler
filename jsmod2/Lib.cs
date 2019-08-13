@@ -27,16 +27,24 @@ namespace jsmod2
         public const string PLAYER_EVENT_TEAM_ROLE_ID = "player-" + PLAYER_TEAM_ROLE_ID;
 
         public const string ADMIN_EVENT_TEAM_ROLE_ID = "admin-" + PLAYER_TEAM_ROLE_ID;
-        
+
         //关于itemEvent类型
         public const string ITEM_EVENT_ID = "item-"+ID;
+        
+        public const string ROOM_ID = "room-"+ID;
+
+        public const string TESLAGATE_ID = "teslaGate-" + ID;//TeslaGate
+
+        public const string VICTIM_ID = "victim-" + ID;
+
+        public const string OWNER_ID = "owner-" + ID;
 
         //关于authCheck类型
         public const string AUTH_CHECK_EVENT_REQUESTER_SCPDATA_ID = "requester-"+PLAYER_SCPDATA_ID;
 
         public const string EVENT_GENERATOR_ID = "generator-" + ID;
 
-        public const string EVENT_GENERATOR_ROOM_ID = "generator-room-" + ID;
+        public const string EVENT_GENERATOR_ROOM_ID = "generator-"+ROOM_ID;
 
         public const string EVENT_USER_ID = "user-" + ID;
 
@@ -49,6 +57,45 @@ namespace jsmod2
         public const string EVENT_DEAD_SCPDATA_ID = "deadPlayer-" + PLAYER_SCPDATA_ID;
 
         public const string EVENT_DEAD_TEAMROLE_ID = "deadPlayer-" + PLAYER_TEAM_ROLE_ID;
+
+        public const string EVENT_ACTIVATOR_ID = "activator-" + ID;
+
+        public const string EVENT_ACTIVATOR_SCPDATA_ID = "activator-" + PLAYER_SCPDATA_ID;
+
+        public const string EVENT_ACTIVATOR_TEAMROLE_ID = "activator-" + PLAYER_TEAM_ROLE_ID;
+
+        public const string EVENT_DOOR_ID = "door-" + ID;
+
+        public const string EVENT_ELEVATOR_ID = "elevator-" + ID;
+        
+        public const string EVENT_KILLER_ID = "killer-" + ID;
+
+        public const string EVENT_KILLER_SCPDATA_ID = "killer-" + PLAYER_SCPDATA_ID;
+
+        public const string EVENT_KILLER_TEAMROLE_ID = "killer-" + PLAYER_TEAM_ROLE_ID;
+        
+        public const string EVENT_VICTIM_SCPDATA_ID = "victim-" + PLAYER_SCPDATA_ID;
+
+        public const string EVENT_VICTIM_TEAMROLE_ID = "victim-" + PLAYER_TEAM_ROLE_ID;
+        
+        public const string EVENT_OWNER_SCPDATA_ID = "owner-" + PLAYER_SCPDATA_ID;
+
+        public const string EVENT_OWNER_TEAMROLE_ID = "owner-" + PLAYER_TEAM_ROLE_ID;
+
+
+        public const string TARGET_ID = "target-" + ID;
+        
+        public const string ATTACKER_TARGET_SCPDATA_ID = "target-"+ PLAYER_SCPDATA_ID;
+
+        public const string ATTACKER_TARGET_TEAMROLE_ID = "target-" + PLAYER_TEAM_ROLE_ID;
+        
+        //Attacker
+
+        public const string ATTACKER_ID = "attacker-" + ID;
+        
+        public const string ATTACKER_OWNER_SCPDATA_ID = "attacker-" + PLAYER_SCPDATA_ID;
+
+        public const string ATTACKER_OWNER_TEAMROLE_ID = "attacker-" + PLAYER_TEAM_ROLE_ID;
 
         public static object getObject(Dictionary<string, string> dic, Type type,string name)
         {
