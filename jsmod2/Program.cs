@@ -12,18 +12,7 @@ using Smod2.EventSystem.Events;
 
 namespace jsmod2
 {
-    [PluginDetails(
-        author = "Magiclu550",
-        name = "ProxyHandler",
-        description = "用于响应JSMOD2端",
-        id = "cn.jsmod2.ProxyHandler",
-        configPrefix = "ep",
-        langFile = "ProxyHandler",
-        version = "1.0",
-        SmodMajor = 3,
-        SmodMinor = 4,
-        SmodRevision = 0
-    )]
+    
     /**
      * ProxyHandler主端，用于交互Jsmod2协议
      * JSON交互采用Socket
@@ -34,9 +23,15 @@ namespace jsmod2
 
     public class RegisterEvents
     {
-        private static HashMap<int,Type> events = new HashMap<int,Type>();
+        private static HashMap<int,Type> events;
         
-        private static HashMap<Type,int> events_Id = new HashMap<Type,int>();
+        private static HashMap<Type,int> events_Id;
+
+        static RegisterEvents()
+        {
+            events = new HashMap<int, Type>();
+            events_Id = new HashMap<Type, int>();
+        }
         public static void registerEvents()
         {
             events.put(0x01,typeof( AdminQueryEvent));//packet 1
@@ -129,6 +124,19 @@ namespace jsmod2
         }
         
     }
+    
+    [PluginDetails(
+        author = "Magiclu550",
+        name = "ProxyHandler",
+        description = "用于响应JSMOD2端",
+        id = "cn.jsmod2.ProxyHandler",
+        configPrefix = "ep",
+        langFile = "ProxyHandler",
+        version = "1.0",
+        SmodMajor = 3,
+        SmodMinor = 4,
+        SmodRevision = 0
+    )]
     class ProxyHandler : Plugin
     {
 
@@ -153,7 +161,7 @@ namespace jsmod2
                 .append("jsmod2.port","19935")
                 .append("jsmod2.debug","false")
                 .create(Server.GetAppFolder()+"/jsmod2.conf");
-            
+
         }
 
         public override void OnEnable()
