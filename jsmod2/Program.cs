@@ -7,6 +7,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using Smod2;
 using Smod2.Attributes;
+using Smod2.EventHandlers;
 using Smod2.Events;
 using Smod2.EventSystem.Events;
 
@@ -153,22 +154,53 @@ namespace jsmod2
         public override void Register()
         {
             handler = this;
-            RegisterEvents.registerEvents();
-            AddEventHandlers(new NewEventHandlers());
+            Info("The ProxyHandler is Start!Please start the jsmod2 server");
             reader.append("this.ip","127.0.0.1")
                 .append("this.port","19938")
                 .append("jsmod2.ip","127.0.0.1")
                 .append("jsmod2.port","19935")
                 .append("jsmod2.debug","false")
                 .create(Server.GetAppFolder()+"/jsmod2.conf");
+            Thread thread = new Thread(listenerThread);
+            thread.Start();
+            Info("ProxyHandler config:"+Server.GetAppFolder()+"/jsmod2.conf");
+            TcpClient client = new TcpClient();
+            int port = Lib.getInt(reader.get("jsmod2.port"));
+            Info("Connecting the Jsmod2....");
+            while (!client.Connected)
+            {
+                try
+                {
+                    client.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")), 20003));
+                }
+                catch (Exception e)
+                {
+                    
+                }
 
+            }
+            client.Close();
+            Info("Connect Successfully");
+            RegisterEvents.registerEvents();
+            Info("registered events");
+            Type type = typeof(NewEventHandlers);
+            NewEventHandlers handlers = new NewEventHandlers();
+            Type[] types = type.GetInterfaces();
+            foreach (var t in types)
+            {
+                if (t != typeof(IEventHandlerSetConfig))
+                {
+                    AddEventHandler(t,handlers);
+                }
+                
+            }
+            AddEventHandler(typeof(IEventHandlerSetConfig),handlers);
+            Info("registered event handlers");
         }
 
         public override void OnEnable()
         { 
-            Info("The ProxyHandler is Start!Please start the jsmod2 server");
-            Thread thread = new Thread(listenerThread);
-            thread.Start();
+            
         }
 
         public override void OnDisable()
@@ -206,6 +238,7 @@ namespace jsmod2
         //在jsmod2的监听器执行完前不能停止，get为true，在read处阻塞
         public void sendEventObject(Event e,int id,IdMapping mapping)
         {
+            
             sendObject("{}",id,mapping,true);
         }
 
@@ -228,7 +261,7 @@ namespace jsmod2
         {
             //如何定位物品，并设置，通过itemMapping找到id归属对象(player这个字段就是id)
             //然后通过id定位到物品，并设置
-            send(getProtocol(json1,id,mapping),tcp,get);
+            send0(getProtocol(json1,id,mapping),tcp,get);
         }
         
         //发送协议集合，用于传输物品数组，有多个不同的id
@@ -242,7 +275,7 @@ namespace jsmod2
                 all = all + "@!" + getProtocol(JsonConvert.SerializeObject(settings[i].responseValue), settings[i].id,
                           settings[i].idMapping);
             }
-            send(all,client);
+            send0(all,client);
         }
 
 
@@ -251,13 +284,13 @@ namespace jsmod2
             sendObjects(new TcpClient(),settings);
         }
 
-        private void send(string jsons, TcpClient tcp, bool get)
+        private void send0(string jsons, TcpClient tcp, bool get)
         {
             try
             {
                 int port;
                 int.TryParse(reader.get("jsmod2.port"), out port);
-                byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons)));
+                byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes(jsons))+";");
                 if (!tcp.Connected)
                 {
                     tcp.Connect(new IPEndPoint(IPAddress.Parse(reader.get("jsmod2.ip")), port));
@@ -268,20 +301,17 @@ namespace jsmod2
                 {
                     tcp.GetStream().ReadByte(); //停止
                 }
+                tcp.Close();
             }
             catch (Exception e)
             {
                 Error(e.Message);
             }
-            finally
-            {
-                tcp.Close();
-            }
         }
-        private void send(string jsons,TcpClient tcp)
+        private void send0(string jsons,TcpClient tcp)
         {
 
-            send(jsons, tcp, false);
+            send0(jsons, tcp, false);
 
         }
 
