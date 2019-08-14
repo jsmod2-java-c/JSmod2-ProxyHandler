@@ -40,7 +40,7 @@ namespace jsmod2
 
         public string get(string key)
         {
-            if ((File.Exists(file))||!getA)
+            if (!getA)
             {
                 FileStream stream = new FileStream(file, FileMode.Open);
                 byte[] bytes = new byte[stream.Length];
