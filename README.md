@@ -15,14 +15,13 @@ ProxyHandler作为一个Smod2插件运行在multiAdmin，并确保在启动jsmod
 
 !!!!ProxyHandler目前已经实现!!!!
 
-`总体[||||||||||||                                        ]` %50
+`总体[||||||||||||                                        ]` %52
 
 1. 响应Jsmod2的事件监听器(%30)
 
 2.已经实现解析实体的协议:
 ```
     Event(%3)
-    Generator (%0)
     Map (%0)
     PocketDimensionExit (%0)
     Room (%0)
@@ -40,6 +39,7 @@ ProxyHandler作为一个Smod2插件运行在multiAdmin，并确保在启动jsmod
     Door (%100)
     (Smod2)Server (%100)
     Elevator (%100)
+    Generator (%100)
     
 ``` 
     

@@ -68,7 +68,17 @@ namespace jsmod2
             handlers.Add(122,new HandleSetElevatorLocked());
             handlers.Add(126,new HandleSetElevatorMovingSpeed());
             handlers.Add(130,new HandleUseElevator());
-            
+            handlers.Add(134,new HandleGeneratorGetEngaged());
+            handlers.Add(135,new HandleGeneratorGetHasTablet());
+            handlers.Add(136,new HandleGeneratorGetLocked());
+            handlers.Add(132,new HandleGetDoorOpen());
+            handlers.Add(137,new HandleGeneratorGetPosition());
+            handlers.Add(139,new HandleGeneratorGetStartTime());
+            handlers.Add(140,new HandleGeneratorTimeLeft());
+            handlers.Add(141,new HandleGeneratorSetHasTablet());
+            handlers.Add(133,new HandleDoorSetOpen());
+            handlers.Add(143,new HandleGeneratorSetTimeLeft());
+            handlers.Add(131,new HandleGeneratorUnlock());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -131,10 +141,122 @@ namespace jsmod2
     }
 }
 
+public class Utils
+{
+    public static JsonSetting[] getOne(string id,object val,IdMapping mapping)
+    {
+        return new[] {new JsonSetting(Lib.getInt(id), val, mapping)};
+    }
+}
+
 public interface Handler
 {
     JsonSetting[] handle(object api,Dictionary<string,string> mapper);
 }
+
+public class HandleGeneratorGetEngaged : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]), generator.Engaged, null)};
+    }
+}
+
+public class HandleGeneratorGetHasTablet : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        return new[] {new JsonSetting(Lib.getInt(mapper["id"]),generator.HasTablet,null)};
+    }
+}
+
+public class HandleGeneratorGetLocked : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        return Utils.getOne(mapper["id"], generator.Locked, null);
+    }
+}
+
+public class HandleGeneratorGetOpen : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        return Utils.getOne(mapper["id"], generator.Open, null);
+    }
+}
+
+public class HandleGeneratorGetPosition : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        return Utils.getOne(mapper["id"], generator.Position, null);
+    }
+}
+
+public class HandleGeneratorGetStartTime : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        return Utils.getOne(mapper["id"], generator.StartTime, null);
+    }
+}
+
+public class HandleGeneratorTimeLeft : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        return Utils.getOne(mapper["id"], generator.TimeLeft, null);
+    }
+}
+
+public class HandleGeneratorSetHasTablet : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        generator.HasTablet = Lib.getBool(mapper["hasTablet"]);
+        return null;
+    }
+}
+
+public class HandleGeneratorSetOpen : Handler
+{
+    JsonSetting[] Handler.handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        generator.Open = Lib.getBool(mapper["open"]);
+        return null;
+    }
+}
+
+public class HandleGeneratorSetTimeLeft : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        generator.TimeLeft = Lib.getDouble(mapper["timeLeft"]);
+        return null;
+    }
+}
+
+public class HandleGeneratorUnlock : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Generator generator = api as Generator;
+        generator.Unlock();
+        return null;
+    }
+}
+
 
 public class HandleGetElevatorLockable : Handler
 {
