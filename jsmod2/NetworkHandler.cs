@@ -82,6 +82,7 @@ namespace jsmod2
             handlers.Add(180,new EventHandler());
             handlers.Add(181,new EventHandler());
             handlers.Add(182,new HandlePlayerContain106GetScp106s());
+            handlers.Add(183,new HandlePlayerSetRoleItems());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -214,6 +215,22 @@ public class HandlePlayerContain106GetScp106s : Handler
         }
 
         return settings;
+    }
+}
+
+public class HandlePlayerSetRoleItems : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        string[] strs = Lib.getArray(mapper["items"]);
+        List<ItemType> types = new List<ItemType>();
+        for (int i = 0; i < strs.Length; i++)
+        {
+            types.Add((ItemType)JsonConvert.DeserializeObject(strs[i],typeof(ItemType)));
+        }
+        PlayerSetRoleEvent e = api as PlayerSetRoleEvent;
+        e.Items = types;
+        return null;
     }
 }
 
