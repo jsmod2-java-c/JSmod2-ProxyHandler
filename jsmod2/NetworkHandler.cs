@@ -79,6 +79,8 @@ namespace jsmod2
             handlers.Add(133,new HandleDoorSetOpen());
             handlers.Add(143,new HandleGeneratorSetTimeLeft());
             handlers.Add(131,new HandleGeneratorUnlock());
+            handlers.Add(180,new EventHandler());
+            handlers.Add(181,new EventHandler());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -147,11 +149,98 @@ public class Utils
     {
         return new[] {new JsonSetting(Lib.getInt(id), val, mapping)};
     }
+
+    public static object getTypeValue(string val)
+    {
+        int i1;
+        bool b = int.TryParse(val,out i1);
+        if (b)
+        {
+            return i1;
+        }
+
+        bool b1;
+        b = bool.TryParse(val, out b1);
+        if (b)
+        {
+            return b1;
+        }
+
+        float f1;
+        b = float.TryParse(val, out f1);
+        if (b)
+        {
+            return f1;
+        }
+
+        Vector vector = Lib.getVector(val);
+
+        if (vector != null)
+        {
+            return vector;
+        }
+
+        char c1;
+
+        b = char.TryParse(val, out c1);
+        if (b)
+        {
+            return c1;
+        }
+
+        return val;
+
+    }
 }
 
 public interface Handler
 {
     JsonSetting[] handle(object api,Dictionary<string,string> mapper);
+}
+
+public class EventHandler : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Type type = api.GetType();
+        if (mapper["id"].Equals("180"))//180  Get
+        {
+            object obj = type.GetField(mapper["field"]).GetValue(api);
+            Type returnType = obj.GetType();
+            bool isCommonType = returnType == typeof(string) || returnType == typeof(bool) ||
+                                returnType == typeof(float)
+                                || returnType == typeof(double) || returnType == typeof(String) ||
+                                returnType == typeof(Vector)
+                                || returnType == typeof(int) || returnType == typeof(long) || returnType == typeof(char)
+                                || returnType == typeof(byte) || returnType == typeof(short);
+            if (isCommonType)
+            {
+                return Utils.getOne(mapper["id"], obj, null);
+            }
+            if (returnType == typeof(List<Vector>))
+            {
+                List<Vector> vectors = (List<Vector>) obj;
+                JsonSetting[] settings = new JsonSetting[vectors.Count];
+                for (int i = 0; i < settings.Length; i++)
+                {
+                    settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),vectors[i],null);
+                }
+
+                return settings;
+            }
+            return null;
+        }
+        
+        string fieldName = mapper["field"];
+        string val = mapper[fieldName];
+        object result = Utils.getTypeValue(val);
+        if (mapper.ContainsKey("apiId"))
+        {
+            result =  ProxyHandler.handler.apiMapping[val];
+        }
+        type.GetField(fieldName).SetValue(api,result);
+        return null;
+    }
 }
 
 public class HandleGeneratorGetEngaged : Handler
