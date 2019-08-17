@@ -81,6 +81,7 @@ namespace jsmod2
             handlers.Add(131,new HandleGeneratorUnlock());
             handlers.Add(180,new EventHandler());
             handlers.Add(181,new EventHandler());
+            handlers.Add(182,new HandlePlayerContain106GetScp106s());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -198,6 +199,24 @@ public interface Handler
     JsonSetting[] handle(object api,Dictionary<string,string> mapper);
 }
 
+public class HandlePlayerContain106GetScp106s : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        PlayerContain106Event e = api as PlayerContain106Event;
+        Player[] players = e.SCP106s;
+        JsonSetting[] settings = new JsonSetting[players.Length];
+        for (int i = 0; i < settings.Length; i++)
+        {
+            settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,
+            new IdMapping().appendId(Lib.ID,Guid.NewGuid().ToString(),players[i]).appendId(Lib.PLAYER_SCPDATA_ID,Guid.NewGuid().ToString(),players[i].Scp079Data).appendId(Lib.PLAYER_TEAM_ROLE_ID,Guid.NewGuid().ToString(),players[i].TeamRole)
+            );
+        }
+
+        return settings;
+    }
+}
+
 public class EventHandler : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
@@ -216,17 +235,6 @@ public class EventHandler : Handler
             if (isCommonType)
             {
                 return Utils.getOne(mapper["id"], obj, null);
-            }
-            if (returnType == typeof(List<Vector>))
-            {
-                List<Vector> vectors = (List<Vector>) obj;
-                JsonSetting[] settings = new JsonSetting[vectors.Count];
-                for (int i = 0; i < settings.Length; i++)
-                {
-                    settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),vectors[i],null);
-                }
-
-                return settings;
             }
             return null;
         }
