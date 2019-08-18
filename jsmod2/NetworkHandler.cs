@@ -80,8 +80,9 @@ namespace jsmod2
             handlers.Add(133,new HandleDoorSetOpen());
             handlers.Add(143,new HandleGeneratorSetTimeLeft());
             handlers.Add(131,new HandleGeneratorUnlock());
-            handlers.Add(180,new EventHandler());
-            handlers.Add(181,new EventHandler());
+            handlers.Add(132,new HandleGeneratorGetOpen());
+            handlers.Add(180,new SimpleHandler());
+            handlers.Add(181,new SimpleHandler());
             handlers.Add(182,new HandlePlayerContain106GetScp106s());
             handlers.Add(183,new HandlePlayerSetRoleItems());
         }
@@ -235,7 +236,7 @@ public class HandlePlayerSetRoleItems : Handler
     }
 }
 
-public class EventHandler : Handler
+public class SimpleHandler : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
     {
