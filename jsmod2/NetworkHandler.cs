@@ -88,6 +88,7 @@ namespace jsmod2
             handlers.Add(183,new HandlePlayerSetRoleItems());
             handlers.Add(184,new HandleTeamRespawnEventGetPlayers());
             handlers.Add(185,new HandleTeamRespawnEventSetPlayers());
+            handlers.Add(190,new HandleDo());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -197,6 +198,17 @@ public class Utils
 
         return val;
 
+    }
+}
+
+public class HandleDo : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Type type = api.GetType();
+        MethodInfo info = type.GetMethod(mapper["do"]);
+        info.Invoke(api,null);
+        return null;
     }
 }
 
