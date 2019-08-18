@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Reflection;
 using jsmod2;
 using jsmod2.command;
 using Newtonsoft.Json;
@@ -241,7 +242,17 @@ public class EventHandler : Handler
         Type type = api.GetType();
         if (mapper["id"].Equals("180"))//180  Get
         {
-            object obj = type.GetField(mapper["field"]).GetValue(api);
+            PropertyInfo info = type.GetProperty(mapper["field"]);
+            object obj;
+            if (info != null)
+            {
+                obj = info.GetValue(api);
+            }
+            else
+            {
+                return null;
+            }
+            
             Type returnType = obj.GetType();
             bool isCommonType = returnType == typeof(string) || returnType == typeof(bool) ||
                                 returnType == typeof(float)
@@ -263,7 +274,11 @@ public class EventHandler : Handler
         {
             result =  ProxyHandler.handler.apiMapping[val];
         }
-        type.GetField(fieldName).SetValue(api,result);
+        PropertyInfo info2 = type.GetProperty(fieldName);
+        if (info2 != null)
+        {
+            info2.SetValue(api,result);
+        }
         return null;
     }
 }
