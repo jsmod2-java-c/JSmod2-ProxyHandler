@@ -7,6 +7,7 @@ using jsmod2.command;
 using Newtonsoft.Json;
 using Smod2.API;
 using Smod2.Events;
+using Smod2.EventSystem.Events;
 
 namespace jsmod2
 {
@@ -85,6 +86,8 @@ namespace jsmod2
             handlers.Add(181,new SimpleHandler());
             handlers.Add(182,new HandlePlayerContain106GetScp106s());
             handlers.Add(183,new HandlePlayerSetRoleItems());
+            handlers.Add(184,new HandleTeamRespawnEventGetPlayers());
+            handlers.Add(185,new HandleTeamRespawnEventSetPlayers());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -200,6 +203,41 @@ public class Utils
 public interface Handler
 {
     JsonSetting[] handle(object api,Dictionary<string,string> mapper);
+}
+
+public class HandleTeamRespawnEventSetPlayers : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        TeamRespawnEvent e = api as TeamRespawnEvent;
+        string[] ids = Lib.getArray(mapper["players"]);
+        List<Player> players = new List<Player>();
+        foreach (string id in ids)
+        {
+            players.Add(ProxyHandler.handler.apiMapping[id] as Player);
+        }
+
+        e.PlayerList = players;
+        return null;
+    }
+}
+
+public class HandleTeamRespawnEventGetPlayers : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        TeamRespawnEvent e = api as TeamRespawnEvent;
+        List<Player> players = e.PlayerList;
+        JsonSetting[] settings = new JsonSetting[players.Count];
+        for (int i = 0; i < settings.Length; i++)
+        {
+            settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,
+                new IdMapping().appendId(Lib.ID,Guid.NewGuid().ToString(),players[i]).appendId(Lib.PLAYER_SCPDATA_ID,Guid.NewGuid().ToString(),players[i].Scp079Data).appendId(Lib.PLAYER_TEAM_ROLE_ID,Guid.NewGuid().ToString(),players[i].TeamRole)
+            );
+        }
+
+        return settings;
+    }
 }
 
 public class HandlePlayerContain106GetScp106s : Handler
