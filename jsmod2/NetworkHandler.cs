@@ -227,8 +227,15 @@ public class HandleDo : Handler
             }
             info.Invoke(api,dArgs);
         }
-        info.Invoke(api,null);
-        return null;
+        object o = info.Invoke(api,null);
+        if (o == null)
+        {
+            return null;
+        }
+        else
+        {
+            return Utils.getOne(mapper["id"], o, null);
+        }
     }
 }
 
