@@ -227,6 +227,10 @@ public class HandleDo : Handler
                 if (Utils.isCommon(types[i]))
                 {
                     dArgs[i] = Utils.getTypeValue(args[i]);
+                    if (types[i] == typeof(char))
+                    {
+                        dArgs[i] = dArgs[0].ToString().ToCharArray()[0];
+                    }
                 }
                 else
                 {
