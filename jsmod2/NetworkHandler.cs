@@ -220,10 +220,19 @@ public class HandleDo : Handler
         if (mapper.ContainsKey("args"))
         {
             string[] args = Lib.getArray(mapper["args"]);
+            Type[] types = info.GetGenericArguments();
             object[] dArgs = new object[args.Length];
             for (int i = 0; i < args.Length; i++)
             {
-                dArgs[i] = Utils.getTypeValue(args[i]);
+                if (Utils.isCommon(types[i]))
+                {
+                    dArgs[i] = Utils.getTypeValue(args[i]);
+                }
+                else
+                {
+                    dArgs[i] = JsonConvert.DeserializeObject(args[i],types[i]);
+                }
+                
             }
             info.Invoke(api,dArgs);
         }
