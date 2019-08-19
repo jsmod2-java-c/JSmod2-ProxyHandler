@@ -199,6 +199,16 @@ public class Utils
         return val;
 
     }
+
+    public static bool isCommon(Type returnType)
+    {
+        return returnType == typeof(string) || returnType == typeof(bool) ||
+            returnType == typeof(float)
+            || returnType == typeof(double) || returnType == typeof(String) ||
+            returnType == typeof(Vector)
+            || returnType == typeof(int) || returnType == typeof(long) || returnType == typeof(char)
+            || returnType == typeof(byte) || returnType == typeof(short);
+    }
 }
 
 public class HandleDo : Handler
@@ -207,6 +217,16 @@ public class HandleDo : Handler
     {
         Type type = api.GetType();
         MethodInfo info = type.GetMethod(mapper["do"]);
+        if (mapper.ContainsKey("args"))
+        {
+            string[] args = Lib.getArray(mapper["args"]);
+            object[] dArgs = new object[args.Length];
+            for (int i = 0; i < args.Length; i++)
+            {
+                dArgs[i] = Utils.getTypeValue(args[i]);
+            }
+            info.Invoke(api,dArgs);
+        }
         info.Invoke(api,null);
         return null;
     }
@@ -305,12 +325,7 @@ public class SimpleHandler : Handler
             }
             
             Type returnType = obj.GetType();
-            bool isCommonType = returnType == typeof(string) || returnType == typeof(bool) ||
-                                returnType == typeof(float)
-                                || returnType == typeof(double) || returnType == typeof(String) ||
-                                returnType == typeof(Vector)
-                                || returnType == typeof(int) || returnType == typeof(long) || returnType == typeof(char)
-                                || returnType == typeof(byte) || returnType == typeof(short);
+            bool isCommonType = Utils.isCommon(returnType);
             if (isCommonType)
             {
                 return Utils.getOne(mapper["id"], obj, null);
@@ -320,16 +335,23 @@ public class SimpleHandler : Handler
         
         string fieldName = mapper["field"];
         string val = mapper[fieldName];
-        object result = Utils.getTypeValue(val);
+        //object result = Utils.getTypeValue(val);
+        object result;
+        PropertyInfo info2 = type.GetProperty(fieldName);
+        Type returnType2 = info2.PropertyType;
+        if (Utils.isCommon(returnType2))
+        {
+            result = Utils.getTypeValue(val);
+        }
+        else
+        {
+            result = JsonConvert.DeserializeObject(val,returnType2);
+        }
         if (mapper.ContainsKey("apiId"))
         {
             result =  ProxyHandler.handler.apiMapping[val];
         }
-        PropertyInfo info2 = type.GetProperty(fieldName);
-        if (info2 != null)
-        {
-            info2.SetValue(api,result);
-        }
+        info2.SetValue(api,result);
         return null;
     }
 }
