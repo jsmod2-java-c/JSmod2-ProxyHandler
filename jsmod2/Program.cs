@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Smod2;
+using Smod2.API;
 using Smod2.Attributes;
 using Smod2.EventHandlers;
 using Smod2.Events;
@@ -267,15 +268,52 @@ namespace jsmod2
         //发送协议集合，用于传输物品数组，有多个不同的id
         public void  sendObjects(TcpClient client,JsonSetting[] settings)
         {
-            string all = getProtocol(JsonConvert.SerializeObject(settings[0].responseValue), settings[0].id,
+            string all = getProtocol(getJson(settings[0].responseValue), settings[0].id,
                 settings[0].idMapping);
             for (int i = 1; i < settings.Length; i++)
             {
-                JsonSetting setting = settings[i];
-                all = all + "@!" + getProtocol(JsonConvert.SerializeObject(settings[i].responseValue), settings[i].id,
+                all = all + "@!" + getProtocol(getJson(settings[i].responseValue), settings[i].id,
                           settings[i].idMapping);
             }
             send0(all,client);
+        }
+
+        private string getJson(object o)
+        {
+            if (o is string)
+            {
+                if (((string) o).Equals("{}"))
+                {
+                    return "{}";
+                }
+
+                
+            }
+
+            if (o is Vector)
+            {
+                Vector v = o as Vector;
+                o = new ProxyVector(v.x,v.y,v.z);
+            }
+
+            if (o is Dictionary<Vector, Vector>)
+            {
+                StringBuilder builder = new StringBuilder("{");
+                foreach (var entry in (Dictionary<Vector,Vector>)o)
+                {
+                    Vector key = entry.Key;
+                    Vector val = entry.Value;
+                    string key1 = "\"(" + key.x + "-" + key.y + "-" + key.z + ")\"";
+                    string val1 = "\"(" + val.x + "-" + val.y + "-" + val.z + ")\"";
+                    builder.Append(key1);
+                    builder.Append(":");
+                    builder.Append(val1);
+                }
+
+                builder.Append("}");
+                return builder.ToString();
+            }
+            return JsonConvert.SerializeObject(o);
         }
 
 
@@ -448,6 +486,19 @@ namespace jsmod2
             }
 
             return len;
+        }
+    }
+
+    public class ProxyVector
+    {
+        public readonly float x;
+        public readonly float y;
+        public readonly float z; 
+        public ProxyVector(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
     }
     

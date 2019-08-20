@@ -112,6 +112,7 @@ namespace jsmod2
 
         public static string[] getArray(string s)
         {
+            
             return s.Split(',');
         }
         
@@ -120,7 +121,8 @@ namespace jsmod2
 
             try
             {
-                string[] xyz = s.Split(',');
+                s = s.Replace("(", "").Replace(")", "");
+                string[] xyz = s.Split('-');
                 float x = getDouble(xyz[0]);
                 float y = getDouble(xyz[1]);
                 float z = getDouble(xyz[2]);

@@ -89,6 +89,12 @@ namespace jsmod2
             handlers.Add(184,new HandleTeamRespawnEventGetPlayers());
             handlers.Add(185,new HandleTeamRespawnEventSetPlayers());
             handlers.Add(190,new HandleDo());
+            handlers.Add(191,new HandleGiveItem());
+            handlers.Add(192,new HandleInventory());
+            handlers.Add(193,new HandleCurrentItem());
+            handlers.Add(194,new HandleUserGroup());
+            handlers.Add(195,new HandleDoApi());
+            handlers.Add(196,new HandleMapApi());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -167,6 +173,13 @@ public class Utils
             return i1;
         }
 
+        long l1;
+        b = long.TryParse(val, out l1);
+        if (b)
+        {
+            return l1;
+        }
+
         bool b1;
         b = bool.TryParse(val, out b1);
         if (b)
@@ -211,6 +224,309 @@ public class Utils
     }
 }
 
+/**
+ * 为map定制的Handler
+ */
+//value 值 字段 1
+//args 参数 方法
+//method 方法名
+//field 字段名 1
+//write 读 字段_赋值 方法_无返回值 1 0
+//read 写 字段_得到值 方法_有返回值 1 0
+//apiId 说明设置的值是api对象 1
+
+//字段的输出包分为以下的要素
+// field 字段
+// value 值
+//read write 可读性
+// apiId 是否是api类型
+//方法的输出包分为以下的要素
+//method 方法
+//args 参数
+//write 可读性
+
+public class HandleMapApi : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Map map = ProxyHandler.handler.Server.Map;
+        Type type = typeof(Map);
+        if (mapper.ContainsKey("field"))//field
+        {
+            PropertyInfo info = type.GetProperty("field");
+            if (info != null)
+            {
+                //两种情况 读写
+                if (mapper.ContainsKey("write"))//write
+                {
+                    //赋值
+                    if (mapper.ContainsKey("apiId"))
+                    {
+                        info.SetValue(map,ProxyHandler.handler.apiMapping[mapper["value"]]);
+                    }
+                    else
+                    {
+                        if (Utils.isCommon(info.PropertyType))
+                        {
+                            info.SetValue(map,Utils.getTypeValue(mapper["value"]));
+                        }
+                        
+                    }
+
+                    return null;
+                }
+                else//no write
+                {
+                    //获得值
+                    //字段只支持普通值
+                    object obj = info.GetValue(map);
+                    if (Utils.isCommon(obj.GetType()))
+                    {
+                        return Utils.getOne(mapper["id"], obj, null);
+                    }
+                    else
+                    {
+                        return Utils.getOne(mapper["id"], obj, null);
+                    }
+                }
+            }
+        }
+
+        if (mapper.ContainsKey("method")) //method
+        {
+            object obj;//return
+            MethodInfo info = type.GetMethod(mapper["method"]);
+            if (info != null)
+            {
+                if (mapper.ContainsKey("args"))
+                {
+                    string[] args = Lib.getArray(mapper["args"]);
+                    object[] objs = new object[args.Length];
+                    ParameterInfo[] infos = info.GetParameters();
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        if (Utils.isCommon(infos[i].ParameterType))
+                        {
+                            objs[i] = Utils.getTypeValue(args[i]);//针对于普通值
+                        }
+                        else
+                        {
+                            if (infos[i].ParameterType == typeof(Player))
+                            {
+                                objs[i] = ProxyHandler.handler.apiMapping[args[i]];//转换玩家对象
+                            }
+                            else
+                            {
+                                objs[i] = JsonConvert.SerializeObject(args[i]);//针对枚举值
+                            }
+                        }
+                    }
+
+                    obj = info.Invoke(map, objs);
+                }
+                else
+                {
+                    obj = info.Invoke(map,null);
+                }
+                //有返回值
+                if (mapper.ContainsKey("read"))
+                {
+                    if (Utils.isCommon(info.ReturnType))
+                    {
+                        return Utils.getOne(mapper["id"],obj,null);//普通值
+                    }
+
+                    if (obj is Enum)
+                    {
+                        return Utils.getOne(mapper["id"], obj, null);//枚举值
+                    }
+                    //特殊对象
+                    if (obj is List<Item>)
+                    {
+                            List<Item> items = (List<Item>) obj;
+                            JsonSetting[] settings = new JsonSetting[items.Count];
+                            for (int i = 0; i < settings.Length; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping().appendId(Lib.ID,items[i]));
+                            }
+                            return settings;
+                    }
+
+                        if (obj is List<Vector> || obj is Dictionary<Vector,Vector>)
+                        {
+                            
+                            return Utils.getOne(mapper["id"],obj,null);
+                        }
+
+                        if (obj is List<Door>)
+                        {
+                            List<Door> doors = (List<Door>) obj;
+                            JsonSetting[] settings = new JsonSetting[doors.Count];
+                            for (int i = 0; i < settings.Length; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping()
+                                    .appendId(Lib.ID,doors[i])
+                                );
+                            }
+
+                            return settings;
+                        }
+
+                        if (obj is List<PocketDimensionExit>)
+                        {
+                            List<PocketDimensionExit> exits = (List<PocketDimensionExit>) obj;
+                            JsonSetting[] settings = new JsonSetting[exits.Count];
+                            for (int i = 0; i < settings.Length; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping()
+                                    .appendId(Lib.ID,exits[i])
+                                );
+                            }
+                            return settings;
+                        }
+
+                        if (obj is Generator[])
+                        {
+                            Generator[] generators = (Generator[]) obj;
+                            JsonSetting[] settings = new JsonSetting[generators.Length];
+                            for (int i = 0; i < settings.Length; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping()
+                                    .appendId(Lib.ID,generators[i])
+                                );
+                            }
+
+                            return settings;
+                        }
+
+                        if (obj is Room[])
+                        {
+                            Room[] rooms = (Room[]) obj;
+                            JsonSetting[] settings = new JsonSetting[rooms.Length];
+                            for (int i = 0; i < settings.Length; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping()
+                                    .appendId(Lib.ID,rooms[i])
+                                );
+                            }
+
+                            return settings;
+                        }
+
+                        if (obj is List<Elevator>)
+                        {
+                            List<Elevator> elevators = (List<Elevator>) obj;
+                            JsonSetting[] settings = new JsonSetting[elevators.Count];
+                            for (int i = 0; i < settings.Length; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping());
+                            }
+
+                            return settings;
+                        }
+
+                        if (obj is List<TeslaGate>)
+                        {
+                            List<TeslaGate> teslaGates = (List<TeslaGate>) obj;
+                            JsonSetting[] settings = new JsonSetting[teslaGates.Count];
+                            for (int i = 0; i < settings.Length; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping().appendId(Lib.ID,teslaGates[i]));
+                            }
+
+                            return settings;
+                        }
+
+                        if (obj is Player)
+                        {
+                            //last
+                            Player player = (Player) obj;
+                            return Utils.getOne(mapper["id"], null, new IdMapping()
+                                .appendId(Lib.ID,Guid.NewGuid().ToString(),player).appendId(Lib.PLAYER_SCPDATA_ID,Guid.NewGuid().ToString(),player.Scp079Data).appendId(Lib.PLAYER_TEAM_ROLE_ID,Guid.NewGuid().ToString(),player.TeamRole)
+                            );
+                        }
+                        
+                        
+                }
+                else
+                {
+                    //无返回值
+                    return null;
+                }
+            }
+
+            
+        }
+
+        return null;
+    }
+}
+
+
+/**
+ * 调用方法，可以设置api的值
+ */
+public class HandleDoApi : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        object value= ProxyHandler.handler.apiMapping[mapper["value"]];
+        api.GetType().GetMethod(mapper["method"]).Invoke(api, new []{value});
+        return null;
+    }
+}
+
+public class HandleUserGroup : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Player player = api as Player;
+        TeamRole t = player.TeamRole;
+        return Utils.getOne(mapper["id"], null, new IdMapping().appendId(Lib.ID, t));
+    }
+}
+
+public class HandleGiveItem : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Player player = api as Player;
+        ItemType type = (ItemType)JsonConvert.DeserializeObject(mapper["item"],typeof(ItemType));
+        Item item = player.GiveItem(type);
+        return Utils.getOne(mapper["id"], null, new IdMapping().appendId(Lib.ID, item));
+    }
+}
+
+public class HandleInventory : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Player player = api as Player;
+        List<Item> items = player.GetInventory();
+        JsonSetting[] settings = new JsonSetting[items.Count];
+        for (int i = 0; i < items.Count; i++)
+        {
+            settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping().appendId(Lib.ID,items[i]));
+        }
+
+        return settings;
+    }
+}
+
+public class HandleCurrentItem : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Player player = api as Player;
+        Item item  = player.GetCurrentItem();
+        return Utils.getOne(mapper["id"], null, new IdMapping().appendId(Lib.ID, item));
+    }
+}
+
+/**
+ * 支持设置枚举值，基本类型值
+ * 返回基本类型和枚举值
+ */
 public class HandleDo : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
@@ -326,6 +642,10 @@ public class HandlePlayerSetRoleItems : Handler
     }
 }
 
+/**
+ * 可以设置基本类型值，api类型值，枚举值
+ * 可以返回基本类型值，枚举值
+ */
 public class SimpleHandler : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
