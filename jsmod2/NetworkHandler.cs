@@ -95,6 +95,7 @@ namespace jsmod2
             handlers.Add(194,new HandleUserGroup());
             handlers.Add(195,new HandleDoApi());
             handlers.Add(196,new HandleMapApi());
+            handlers.Add(197,new HandleServerApi());
         }
         public static void handleJsmod2(int id, String json,Dictionary<string,string> mapper,TcpClient client) 
         {
@@ -222,35 +223,9 @@ public class Utils
             || returnType == typeof(int) || returnType == typeof(long) || returnType == typeof(char)
             || returnType == typeof(byte) || returnType == typeof(short);
     }
-}
 
-/**
- * 为map定制的Handler
- */
-//value 值 字段 1
-//args 参数 方法
-//method 方法名
-//field 字段名 1
-//write 读 字段_赋值 方法_无返回值 1 0
-//read 写 字段_得到值 方法_有返回值 1 0
-//apiId 说明设置的值是api对象 1
-
-//字段的输出包分为以下的要素
-// field 字段
-// value 值
-//read write 可读性
-// apiId 是否是api类型
-//方法的输出包分为以下的要素
-//method 方法
-//args 参数
-//write 可读性
-
-public class HandleMapApi : Handler
-{
-    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    public static JsonSetting[] invoke(object map, Type type,Dictionary<string,string> mapper)
     {
-        Map map = ProxyHandler.handler.Server.Map;
-        Type type = typeof(Map);
         if (mapper.ContainsKey("field"))//field
         {
             PropertyInfo info = type.GetProperty("field");
@@ -444,9 +419,34 @@ public class HandleMapApi : Handler
                             return Utils.getOne(mapper["id"], null, new IdMapping()
                                 .appendId(Lib.ID,Guid.NewGuid().ToString(),player).appendId(Lib.PLAYER_SCPDATA_ID,Guid.NewGuid().ToString(),player.Scp079Data).appendId(Lib.PLAYER_TEAM_ROLE_ID,Guid.NewGuid().ToString(),player.TeamRole)
                             );
+                            
                         }
-                        
-                        
+
+                        if (obj is List<Connection>)
+                        {
+                            List<Connection> connections = (List<Connection>) obj;
+                            JsonSetting[] settings = new JsonSetting[connections.Count];
+                            for (int i = 0; i < connections.Count; i++)
+                            {
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping()
+                                    .appendId(Lib.ID,connections[i])
+                                );
+                            }
+
+                            return settings;
+
+                        }
+
+                        if (obj is List<TeamRole>)
+                        {
+                            List<TeamRole> teamRoles = (List<TeamRole>) obj;
+                            JsonSetting[] settings = new JsonSetting[teamRoles.Count];
+                            for (int i = 0; i < settings.Length; i++){
+                                settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping().appendId(Lib.ID,teamRoles[i]));
+                            }
+                            return settings;
+                        }
+
                 }
                 else
                 {
@@ -462,6 +462,46 @@ public class HandleMapApi : Handler
     }
 }
 
+/**
+ * 为map定制的Handler
+ */
+//value 值 字段 1
+//args 参数 方法
+//method 方法名
+//field 字段名 1
+//write 读 字段_赋值 方法_无返回值 1 0
+//read 写 字段_得到值 方法_有返回值 1 0
+//apiId 说明设置的值是api对象 1
+
+//字段的输出包分为以下的要素
+// field 字段
+// value 值
+//read write 可读性
+// apiId 是否是api类型
+//方法的输出包分为以下的要素
+//method 方法
+//args 参数
+//write 可读性
+
+public class HandleMapApi : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Map map = ProxyHandler.handler.Server.Map;
+        Type type = typeof(Map);
+        return Utils.invoke(map,type,mapper);
+    }
+}
+
+public class HandleServerApi : Handler
+{
+    public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
+    {
+        Server server = ProxyHandler.handler.Server;
+        Type tp = typeof(Server);
+        return Utils.invoke(server, tp,mapper);
+    }
+}
 
 /**
  * 调用方法，可以设置api的值
