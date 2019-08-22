@@ -78,7 +78,7 @@ namespace jsmod2
             handlers.Add(139,new HandleGeneratorGetStartTime());
             handlers.Add(140,new HandleGeneratorTimeLeft());
             handlers.Add(141,new HandleGeneratorSetHasTablet());
-            handlers.Add(133,new HandleDoorSetOpen());
+            handlers.Add(133,new HandleGeneratorSetOpen());
             handlers.Add(143,new HandleGeneratorSetTimeLeft());
             handlers.Add(131,new HandleGeneratorUnlock());
             handlers.Add(132,new HandleGeneratorGetOpen());

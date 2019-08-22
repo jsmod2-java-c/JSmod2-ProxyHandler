@@ -20,7 +20,7 @@ namespace jsmod2
                                     IEventHandlerScp096Enrage,IEventHandlerScp096Panic,IEventHandlerConnect,IEventHandlerDisconnect,IEventHandlerFixedUpdate,IEventHandlerLateDisconnect,IEventHandlerLateUpdate,
                                     IEventHandlerRoundEnd,IEventHandlerRoundRestart,IEventHandlerSceneChanged,IEventHandlerSetServerName,IEventHandlerUpdate,IEventHandlerWaitingForPlayers,IEventHandlerDecideTeamRespawnQueue,
                                     IEventHandlerSetNTFUnitName,IEventHandlerSetSCPConfig,IEventHandlerTeamRespawn,IEventHandlerAdminQuery,IEventHandlerAuthCheck,IEventHandlerBan,IEventHandlerPlayerPickupItem,
-                                    IEventHandlerPlayerPickupItemLate,IEventHandlerPlayerJoin,IEventHandlerSetConfig
+                                    IEventHandlerPlayerPickupItemLate,IEventHandlerPlayerJoin,IEventHandlerSetConfig,IEventHandlerCheckRoundEnd,IEventHandlerInfected
                                     
 
     {
@@ -43,6 +43,26 @@ namespace jsmod2
         void IEventHandlerSetConfig.OnSetConfig(SetConfigEvent ev)
         {
             send(ev,new IdMapping());
+        }
+
+        void IEventHandlerCheckRoundEnd.OnCheckRoundEnd(CheckRoundEndEvent ev)
+        {
+            send(ev,new IdMapping()
+                .appendId(Lib.ROUND_ID,ev.Round)
+                .appendId(Lib.ROUND_STATS_ID,ev.Round.Stats)
+            );
+        }
+
+        void IEventHandlerInfected.OnPlayerInfected(PlayerInfectedEvent ev)
+        {
+            send(ev,new IdMapping()
+                .appendId(Lib.PLAYER_ID,  ev.Player)
+                .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                .appendId(Lib.ATTACKER_ID,ev.Attacker)
+                .appendId(Lib.EVENT_ATTACKE_SCPDATA_ID,ev.Attacker.Scp079Data)
+                .appendId(Lib.EVENT_ATTACKER_TEAMROLE_ID,ev.Attacker.TeamRole)
+            );
         }
         void IEventHandlerPlayerPickupItemLate.OnPlayerPickupItemLate(PlayerPickupItemLateEvent ev)
         {
