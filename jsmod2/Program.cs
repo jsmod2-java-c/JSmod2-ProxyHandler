@@ -117,6 +117,11 @@ namespace jsmod2
         events.put(0x50,typeof( SetNTFUnitNameEvent));
         events.put(0x51,typeof( SetSCPConfigEvent));
         events.put(0x52,typeof( TeamRespawnEvent));
+        events.put(301,typeof(CheckRoundEndEvent));
+        events.put(302,typeof(PlayerInfectedEvent));
+        events.put(303,typeof(PlayerDoorAccessEvent));
+        events.put(304,typeof(PlayerNicknameSetEvent));
+        events.put(305,typeof(WarheadStopEvent));
         events_Id = events.keyToValue();
         }
 

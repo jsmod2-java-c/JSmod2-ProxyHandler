@@ -20,7 +20,7 @@ namespace jsmod2
                                     IEventHandlerScp096Enrage,IEventHandlerScp096Panic,IEventHandlerConnect,IEventHandlerDisconnect,IEventHandlerFixedUpdate,IEventHandlerLateDisconnect,IEventHandlerLateUpdate,
                                     IEventHandlerRoundEnd,IEventHandlerRoundRestart,IEventHandlerSceneChanged,IEventHandlerSetServerName,IEventHandlerUpdate,IEventHandlerWaitingForPlayers,IEventHandlerDecideTeamRespawnQueue,
                                     IEventHandlerSetNTFUnitName,IEventHandlerSetSCPConfig,IEventHandlerTeamRespawn,IEventHandlerAdminQuery,IEventHandlerAuthCheck,IEventHandlerBan,IEventHandlerPlayerPickupItem,
-                                    IEventHandlerPlayerPickupItemLate,IEventHandlerPlayerJoin,IEventHandlerSetConfig,IEventHandlerCheckRoundEnd,IEventHandlerInfected
+                                    IEventHandlerPlayerPickupItemLate,IEventHandlerPlayerJoin,IEventHandlerSetConfig,IEventHandlerCheckRoundEnd,IEventHandlerInfected,IEventHandlerDoorAccess,IEventHandlerNicknameSet,IEventHandlerWarheadStopCountdown
                                     
 
     {
@@ -39,10 +39,41 @@ namespace jsmod2
         {
             send(t,new IdMapping().appendId(Lib.ID,""));
         }
-        
+
+
+        void IEventHandlerWarheadStopCountdown.OnStopCountdown(WarheadStopEvent ev)
+        {
+            send(ev,new IdMapping()
+                .appendId(Lib.EVENT_ACTIVATOR_ID,ev.Activator)
+                .appendId(Lib.EVENT_ACTIVATOR_SCPDATA_ID,ev.Activator.Scp079Data)
+                .appendId(Lib.EVENT_ACTIVATOR_TEAMROLE_ID,ev.Activator.TeamRole)
+            );
+        }
+        void IEventHandlerDoorAccess.OnDoorAccess(PlayerDoorAccessEvent ev)
+        {
+            send(ev,
+                new IdMapping()
+                    .appendId(Lib.EVENT_DOOR_ID,ev.Door)
+                    .appendId(Lib.PLAYER_ID, ev.Player)
+                    .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                    .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                
+            );
+        }
         void IEventHandlerSetConfig.OnSetConfig(SetConfigEvent ev)
         {
             send(ev,new IdMapping());
+        }
+
+        void IEventHandlerNicknameSet.OnNicknameSet(PlayerNicknameSetEvent ev)
+        {
+            send(ev,
+                new IdMapping()
+                    .appendId(Lib.PLAYER_ID, ev.Player)
+                    .appendId(Lib.PLAYER_EVENT_SCPDATA_ID,  ev.Player.Scp079Data)
+                    .appendId(Lib.PLAYER_EVENT_TEAM_ROLE_ID,ev.Player.TeamRole)
+                
+            );
         }
 
         void IEventHandlerCheckRoundEnd.OnCheckRoundEnd(CheckRoundEndEvent ev)
