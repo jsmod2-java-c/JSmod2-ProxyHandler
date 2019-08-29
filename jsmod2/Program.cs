@@ -147,6 +147,8 @@ namespace jsmod2
     class ProxyHandler : Plugin
     {
 
+        private bool started;
+
         public Dictionary<String, object> apiMapping = new Dictionary<string, object>();
         
         public PropertiesReader reader = new PropertiesReader();
@@ -160,6 +162,7 @@ namespace jsmod2
         public override void Register()
         {
             handler = this;
+            started = true;
             Info("The ProxyHandler is Start!Please start the jsmod2 server");
             reader.append("this.ip","127.0.0.1")
                 .append("this.port","19938")
@@ -212,6 +215,7 @@ namespace jsmod2
         public override void OnDisable()
         {
             Info("The ProxyHandler have stopped,please close the jsmod2");
+            started = false;
         }
 
         public void listenerThread()
@@ -223,6 +227,10 @@ namespace jsmod2
             listener.Start();
             while (true)
             {
+                if (!started)
+                {
+                    ProxyHandler.handler.Info("Proxy Thread is exited");
+                }
                 try
                 {
                     TcpClient client = listener.AcceptTcpClient();
