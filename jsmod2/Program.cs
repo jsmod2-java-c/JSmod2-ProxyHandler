@@ -230,6 +230,7 @@ namespace jsmod2
                 if (!started)
                 {
                     ProxyHandler.handler.Info("Proxy Thread is exited");
+                    break;
                 }
                 try
                 {
