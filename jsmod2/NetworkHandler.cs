@@ -228,7 +228,7 @@ public class Utils
     {
         if (mapper.ContainsKey("field"))//field
         {
-            PropertyInfo info = type.GetProperty("field");
+            PropertyInfo info = type.GetProperty(mapper["field"]);
             if (info != null)
             {
                 //两种情况 读写
@@ -241,9 +241,9 @@ public class Utils
                     }
                     else
                     {
-                        if (Utils.isCommon(info.PropertyType))
+                        if (isCommon(info.PropertyType))
                         {
-                            info.SetValue(map,Utils.getTypeValue(mapper["value"]));
+                            info.SetValue(map,getTypeValue(mapper["value"]));
                         }
                         
                     }
@@ -255,13 +255,17 @@ public class Utils
                     //获得值
                     //字段只支持普通值
                     object obj = info.GetValue(map);
-                    if (Utils.isCommon(obj.GetType()))
+                    if (isCommon(obj.GetType()))
                     {
-                        return Utils.getOne(mapper["id"], obj, null);
+                        return getOne(mapper["id"], obj, null);
                     }
                     else
                     {
-                        return Utils.getOne(mapper["id"], obj, null);
+                        //这地方不支持其他值
+                        if (obj.GetType().IsSubclassOf(typeof(Enum)))
+                            return getOne(mapper["id"], obj, null);
+                        else
+                            return getOne(mapper["id"], obj, null);
                     }
                 }
             }
@@ -280,13 +284,14 @@ public class Utils
                     ParameterInfo[] infos = info.GetParameters();
                     for (int i = 0; i < args.Length; i++)
                     {
-                        if (Utils.isCommon(infos[i].ParameterType))
+                        if (isCommon(infos[i].ParameterType))
                         {
-                            objs[i] = Utils.getTypeValue(args[i]);//针对于普通值
+                            objs[i] = getTypeValue(args[i]);//针对于普通值
                         }
                         else
                         {
-                            if (infos[i].ParameterType == typeof(Player))
+                            //如果不是enum的子类，那么就是api类型
+                            if (!infos[i].ParameterType.IsSubclassOf(typeof(Enum)))
                             {
                                 objs[i] = ProxyHandler.handler.apiMapping[args[i]];//转换玩家对象
                             }
@@ -306,14 +311,14 @@ public class Utils
                 //有返回值
                 if (mapper.ContainsKey("read"))
                 {
-                    if (Utils.isCommon(info.ReturnType))
+                    if (isCommon(info.ReturnType))
                     {
-                        return Utils.getOne(mapper["id"],obj,null);//普通值
+                        return getOne(mapper["id"],obj,null);//普通值
                     }
 
                     if (obj is Enum)
                     {
-                        return Utils.getOne(mapper["id"], obj, null);//枚举值
+                        return getOne(mapper["id"], obj, null);//枚举值
                     }
                     //特殊对象
                     if (obj is List<Item>)
@@ -330,7 +335,7 @@ public class Utils
                         if (obj is List<Vector> || obj is Dictionary<Vector,Vector>)
                         {
                             
-                            return Utils.getOne(mapper["id"],obj,null);
+                            return getOne(mapper["id"],obj,null);
                         }
 
                         if (obj is List<Door>)
