@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using jsmod2;
 using jsmod2.command;
 using Newtonsoft.Json;
@@ -121,9 +122,27 @@ namespace jsmod2
                 
                     if (handlers.ContainsKey(id))
                     {
+                        JsonSetting[] response = null;
+                        
+                        
                         ProxyHandler.handler.Info("handling the "+id);
                         Handler handler = handlers[id];
-                        JsonSetting[] response = handler.handle(o,mapper);
+                        try
+                        {
+                            response = handler.handle(o,mapper);
+                        }
+                        catch (Exception e)
+                        {
+                            if (e is NullReferenceException)
+                            {
+                                var utf8WithoutBom = new UTF8Encoding(false);
+                                //捕捉空指针则返回null
+                                byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes("null")));
+                                client.GetStream().Write(bytes,0,bytes.Length);
+                                return;
+                            }
+                        }
+                        
                         if (response != null)
                         {
                             //将response对象发出去
