@@ -284,13 +284,18 @@ namespace jsmod2
         //发送协议集合，用于传输物品数组，有多个不同的id
         public void  sendObjects(TcpClient client,JsonSetting[] settings)
         {
-            string all = getProtocol(getJson(settings[0].responseValue), settings[0].id,
-                settings[0].idMapping);
-            for (int i = 1; i < settings.Length; i++)
+            string all = "";
+            if (settings.Length != 0)
             {
-                all = all + "@!" + getProtocol(getJson(settings[i].responseValue), settings[i].id,
-                          settings[i].idMapping);
+                all = getProtocol(getJson(settings[0].responseValue), settings[0].id,
+                    settings[0].idMapping);
+                for (int i = 1; i < settings.Length; i++)
+                {
+                    all = all + "@!" + getProtocol(getJson(settings[i].responseValue), settings[i].id,
+                              settings[i].idMapping);
+                }
             }
+            
             send0(all,client);
         }
 

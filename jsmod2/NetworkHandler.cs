@@ -127,26 +127,33 @@ namespace jsmod2
                         
                         ProxyHandler.handler.Info("handling the "+id);
                         Handler handler = handlers[id];
+                        //ProxyHandler.handler.Info(json);//
                         try
                         {
                             response = handler.handle(o,mapper);
                         }
                         catch (Exception e)
                         {
+                            //ProxyHandler.handler.Info(e.Message);
                             if (e is NullReferenceException)
                             {
-                                var utf8WithoutBom = new UTF8Encoding(false);
-                                //捕捉空指针则返回null
-                                byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes("null")));
-                                client.GetStream().Write(bytes,0,bytes.Length);
+                                sendNull(client);
                                 return;
                             }
                         }
                         
                         if (response != null)
                         {
-                            //将response对象发出去
-                            ProxyHandler.handler.sendObjects(client,response);
+                            if (response.Length == 0)
+                            {
+                                sendNull(client);
+                            }
+                            else
+                            {
+                                //将response对象发出去
+                                ProxyHandler.handler.sendObjects(client,response);
+                            }
+                            
                             client.Close();
                         }
                         else
@@ -166,6 +173,7 @@ namespace jsmod2
             {
                 ProxyHandler.handler.Error(e.GetType()+"");
                 ProxyHandler.handler.Error(e.Message);
+                ProxyHandler.handler.Error(e.StackTrace);
             }
 
             if (Lib.getBool(ProxyHandler.handler.reader.get("jsmod2.debug")))
@@ -173,6 +181,14 @@ namespace jsmod2
                 ProxyHandler.handler.Info("packet: id: "+id+" json: "+json+" finish a packet about jsmod2");
             }
             
+        }
+
+        private static void sendNull(TcpClient client)
+        {
+            var utf8WithoutBom = new UTF8Encoding(false);
+            //捕捉空指针则返回null
+            byte[] bytes = utf8WithoutBom.GetBytes(Convert.ToBase64String(utf8WithoutBom.GetBytes("null")));
+            client.GetStream().Write(bytes,0,bytes.Length);
         }
     }
 }
@@ -1031,10 +1047,6 @@ public class HandleServerGetPlayers : Handler
     {
         //ProxyHandler.handler.Info(ProxyHandler.handler.Server.GetPlayers()==null?"null":"not null");
         List<Player> players = ProxyHandler.handler.Server.GetPlayers(!mapper.ContainsKey("filter")?"":mapper["filter"]);
-        if (players == null)
-        {
-            return new JsonSetting[0];
-        }
         //ProxyHandler.handler.Info(players+"");
         JsonSetting[] settings = new JsonSetting[players.ToArray().Length];
         for (int i = 0; i < settings.Length; i++)
