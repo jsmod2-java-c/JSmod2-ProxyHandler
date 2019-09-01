@@ -122,7 +122,6 @@ namespace jsmod2
                     if (handlers.ContainsKey(id))
                     {
                         ProxyHandler.handler.Info("handling the "+id);
-                        ProxyHandler.handler.Info(json);
                         Handler handler = handlers[id];
                         JsonSetting[] response = handler.handle(o,mapper);
                         if (response != null)
@@ -1011,7 +1010,13 @@ public class HandleServerGetPlayers : Handler
 {
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
     {
-        List<Player> players = ProxyHandler.handler.Server.GetPlayers();
+        //ProxyHandler.handler.Info(ProxyHandler.handler.Server.GetPlayers()==null?"null":"not null");
+        List<Player> players = ProxyHandler.handler.Server.GetPlayers(!mapper.ContainsKey("filter")?"":mapper["filter"]);
+        if (players == null)
+        {
+            return new JsonSetting[0];
+        }
+        //ProxyHandler.handler.Info(players+"");
         JsonSetting[] settings = new JsonSetting[players.ToArray().Length];
         for (int i = 0; i < settings.Length; i++)
         {
