@@ -595,7 +595,14 @@ public class HandleDo : Handler
                 }
                 else
                 {
-                    dArgs[i] = JsonConvert.DeserializeObject(args[i],types[i]);
+                    if (types[i].IsSubclassOf(typeof(Enum)))
+                    {
+                        dArgs[i] = JsonConvert.DeserializeObject(args[i],types[i]);
+                    }
+                    else
+                    {
+                        dArgs[i] = ProxyHandler.handler.apiMapping[args[i]];
+                    }
                 }
                 
             }
@@ -608,7 +615,26 @@ public class HandleDo : Handler
         }
         else
         {
-            return Utils.getOne(mapper["id"], o, null);
+            if (info.ReturnType.IsSubclassOf(typeof(Enum))||Utils.isCommon(info.ReturnType))
+            {
+                return Utils.getOne(mapper["id"], o, null);   
+            }
+            else
+            {
+                if (info.ReturnType == typeof(Door[]))
+                {
+                    Door[] doors = o as Door[];
+                    JsonSetting[] settings = new JsonSetting[doors.Length];
+                    for (int i = 0; i < doors.Length; i++)
+                    {
+                        settings[i] = new JsonSetting(Lib.getInt(mapper["id"]),null,new IdMapping()
+                            .appendId(Lib.ID,doors[i])
+                        );
+                    }
+                }
+
+                return null;
+            }
         }
     }
 }
@@ -690,6 +716,7 @@ public class HandlePlayerSetRoleItems : Handler
 /**
  * 可以设置基本类型值，api类型值，枚举值
  * 可以返回基本类型值，枚举值
+ * 这个就是基于反射实现的SimpleHandler，可以阅读ProxyHandler源码
  */
 public class SimpleHandler : Handler
 {
@@ -711,7 +738,7 @@ public class SimpleHandler : Handler
             
             Type returnType = obj.GetType();
             bool isCommonType = Utils.isCommon(returnType);
-            if (isCommonType)
+            if (isCommonType||returnType.IsSubclassOf(typeof(Enum)))
             {
                 return Utils.getOne(mapper["id"], obj, null);
             }

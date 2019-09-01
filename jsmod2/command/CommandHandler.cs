@@ -21,6 +21,7 @@ namespace jsmod2.command
             this.description = cmd.description;
         }
 
+        //这里是对于命令的响应处理部分,发出信息,在JSmod2中接受
         public string[] OnCall(ICommandSender sender, string[] args)
         {
             if (sender is Server)
