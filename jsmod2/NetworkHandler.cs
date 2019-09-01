@@ -45,7 +45,7 @@ namespace jsmod2
             handlers.Add(110,new HandleDoorGetDestoryed());
             handlers.Add(112,new HandleDoorGetDontOpenOnWarhead());
             handlers.Add(116,new HandleDoorGetLocked());
-            handlers.Add(108,new HandleGetDoorOpen());
+            handlers.Add(108,new HandleGetDoorOpen());//
             handlers.Add(119,new HandleGetDoorName());
             handlers.Add(120,new HandleGetDoorPermission());
             handlers.Add(118,new HandleDoorPosition());
@@ -73,7 +73,6 @@ namespace jsmod2
             handlers.Add(134,new HandleGeneratorGetEngaged());
             handlers.Add(135,new HandleGeneratorGetHasTablet());
             handlers.Add(136,new HandleGeneratorGetLocked());
-            handlers.Add(132,new HandleGetDoorOpen());
             handlers.Add(137,new HandleGeneratorGetPosition());
             handlers.Add(139,new HandleGeneratorGetStartTime());
             handlers.Add(140,new HandleGeneratorTimeLeft());
@@ -81,7 +80,7 @@ namespace jsmod2
             handlers.Add(133,new HandleGeneratorSetOpen());
             handlers.Add(143,new HandleGeneratorSetTimeLeft());
             handlers.Add(131,new HandleGeneratorUnlock());
-            handlers.Add(132,new HandleGeneratorGetOpen());
+            handlers.Add(132,new HandleGeneratorGetOpen());//
             handlers.Add(180,new SimpleHandler());
             handlers.Add(181,new SimpleHandler());
             handlers.Add(182,new HandlePlayerContain106GetScp106s());
@@ -123,6 +122,7 @@ namespace jsmod2
                     if (handlers.ContainsKey(id))
                     {
                         ProxyHandler.handler.Info("handling the "+id);
+                        ProxyHandler.handler.Info(json);
                         Handler handler = handlers[id];
                         JsonSetting[] response = handler.handle(o,mapper);
                         if (response != null)
@@ -146,6 +146,7 @@ namespace jsmod2
             }
             catch (Exception e)
             {
+                ProxyHandler.handler.Error(e.GetType()+"");
                 ProxyHandler.handler.Error(e.Message);
             }
 
@@ -1257,7 +1258,7 @@ public class HandleCommand : Handler
     public JsonSetting[] handle(object api, Dictionary<string, string> mapper)
     { 
         string name = mapper["name"];
-        string args = mapper["args"];
+        string args = !mapper.ContainsKey("args")?"":mapper["args"];
         string[] argsC;
         if (args.Equals(""))
         {

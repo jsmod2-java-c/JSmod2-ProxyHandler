@@ -244,6 +244,8 @@ namespace jsmod2
                 {
                     //输出错误日志
                     Error(e.Message);
+                    Error(e.GetType()+"");
+                    Error(e.StackTrace);
                 }
                 
             }
